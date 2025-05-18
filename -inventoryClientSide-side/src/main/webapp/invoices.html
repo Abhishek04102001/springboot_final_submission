@@ -1,0 +1,478 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>Invoices</title>
+
+  <!-- Google Fonts -->
+  <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;600&display=swap" rel="stylesheet" />
+  <script src="https://unpkg.com/lucide@latest"></script>
+
+  <style>
+    * {
+      margin: 0;
+      padding: 0;
+      box-sizing: border-box;
+    }
+
+    body {
+      font-family: 'Inter', sans-serif;
+      background-color: #f4f6fa;
+      color: #333;
+    }
+
+    nav {
+      background-color: #4e54c8;
+      color: white;
+      padding: 15px 30px;
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      box-shadow: 0 2px 8px rgba(0, 0, 0, 0.1);
+    }
+
+    .nav-left h1 {
+      font-size: 24px;
+      font-weight: 600;
+    }
+
+    .nav-links {
+      display: flex;
+      align-items: center;
+      gap: 20px;
+    }
+
+    .nav-link {
+      display: flex;
+      align-items: center;
+      gap: 6px;
+      background: white;
+      color: #4e54c8;
+      padding: 8px 14px;
+      border-radius: 8px;
+      cursor: pointer;
+      font-weight: 500;
+      text-decoration: none;
+      transition: background 0.2s;
+    }
+
+    .nav-link:hover {
+      background: #e1e4f0;
+    }
+
+    .main-content {
+      padding: 40px 30px;
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      gap: 30px;
+      width: 100%;
+    }
+
+    .invoice-card {
+      background-color: white;
+      width: 100%;
+      /* max-width: 700px; */
+      padding: 20px;
+      border-radius: 16px;
+      box-shadow: 0 4px 12px rgba(0, 0, 0, 0.08);
+      border: 1px solid #e5e7eb;
+      margin-bottom: 15px;
+    }
+
+    .invoice-header {
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+    }
+
+    .vendor-name {
+      font-size: 20px;
+      font-weight: 600;
+    }
+
+    .invoice-status {
+      font-size: 0.85rem;
+      font-weight: bold;
+      padding: 4px 12px;
+      border-radius: 999px;
+      text-transform: uppercase;
+    }
+
+    .status-pending {
+      background: #facc15;
+      color: #92400e;
+    }
+
+    .status-paid {
+      background: #4ade80;
+      color: #166534;
+    }
+
+    .status-cancelled {
+      background: #f87171;
+      color: #7f1d1d;
+    }
+
+    .meta-dates {
+      margin-top: 8px;
+      color: #6b7280;
+      font-size: 0.875rem;
+    }
+
+    .item-table {
+      width: 100%;
+      margin-top: 16px;
+      border-collapse: collapse;
+    }
+
+    .item-table th,
+    .item-table td {
+      padding: 8px;
+      border-bottom: 1px solid #e5e7eb;
+      text-align: left;
+    }
+
+    .invoice-footer {
+      margin-top: 16px;
+      font-weight: bold;
+      color: #111827;
+    }
+
+    .action-buttons {
+      margin-top: 16px;
+      display: flex;
+      gap: 12px;
+    }
+
+    .action-btn {
+      padding: 8px 14px;
+      font-weight: 600;
+      border-radius: 8px;
+      cursor: pointer;
+      font-size: 0.875rem;
+      border: none;
+    }
+
+    .purchase-btn {
+      background: #4e54c8;
+      color: white;
+    }
+
+    .cancel-btn {
+      background: transparent;
+      border: 1px solid #dc2626;
+      color: #dc2626;
+    }
+
+    .cancel-btn:hover {
+      background: #fee2e2;
+    }
+
+    .sidebar {
+      width: 220px;
+      background-color: white;
+      border-right: 1px solid #ddd;
+      padding: 20px;
+      box-shadow: 2px 0 4px rgba(0, 0, 0, 0.05);
+    }
+
+    .sidebar h2 {
+      margin-bottom: 20px;
+      font-size: 18px;
+    }
+
+    .sidebar button {
+      display: block;
+      width: 100%;
+      padding: 10px 12px;
+      margin-bottom: 10px;
+      border: none;
+      background-color: #f0f2f5;
+      color: #333;
+      text-align: left;
+      font-size: 15px;
+      border-radius: 6px;
+      cursor: pointer;
+      transition: background-color 0.2s;
+    }
+
+    .sidebar button.active,
+    .sidebar button:hover {
+      background-color: #4e54c8;
+      color: white;
+    }
+
+    .status-OUT_FOR_DELIVERY {
+      background: #facc15;
+      color: #92400e;
+    }
+
+    .status-ORDER_CONFIRMED {
+      background: #facc15;
+      color: #92400e;
+    }
+
+    .status-DELIVERED {
+      background: #4ade80;
+      color: #166534;
+    }
+
+    .status-DISPATCHED {
+      background: #f87171;
+      color: #7f1d1d;
+    }
+
+    .status-dropdown {
+      margin-top: 10px;
+      padding: 6px 12px;
+      border: 1px solid #ccc;
+      border-radius: 6px;
+      font-size: 0.85rem;
+    }
+  </style>
+</head>
+
+<body>
+
+  <!-- Navigation Bar -->
+  <nav>
+    <div class="nav-left">
+      <h1>Admin Panel</h1>
+    </div>
+    <div class="nav-links">
+      <a href="make-purchase.html" class="nav-link">
+        <i data-lucide="shopping-bag"></i><span>Make Purchase</span>
+      </a>
+      <a href="invoices.html" class="nav-link">
+        <i data-lucide="file-text"></i><span>Invoices</span>
+      </a>
+      <a href="admin-products.html" class="nav-link">
+        <i data-lucide="package"></i><span>Product</span>
+      </a>
+      <a href="vendors.html" class="nav-link">
+        <i data-lucide="store"></i><span>Vendor</span>
+      </a>
+      <a href="#" class="nav-link" onclick="logout()">
+        <i data-lucide="log-out"></i><span>Logout</span>
+      </a>
+    </div>
+  </nav>
+
+  <!-- Invoice Content -->
+  <!-- Main Layout -->
+  <div style="display: flex;">
+    <!-- Sidebar -->
+    <div class="sidebar">
+      <!-- <h2>Profile</h2> -->
+      <button id="ordersBtn" class="active">Vendor Orders</button>
+      <button id="updateBtn">Customer Orders</button>
+    </div>
+
+    <!-- Main Content -->
+    <div class="main-content">
+      <!-- <h1 style="font-size: 1.75rem;">Invoices</h1> -->
+      <!-- Inside <div class="main-content"> -->
+      <div id="invoiceContainer" style="width: 100%;"></div>
+      <div id="customerContainer" style="width: 100%; display: none;"></div>
+
+    </div>
+  </div>
+  <script>
+    if (localStorage.getItem("isAdmin") !== "true") {
+      window.location.href = "index.html";
+    }
+
+    function logout() {
+      localStorage.removeItem("isAdmin");
+      alert("Logged out successfully.");
+      window.location.href = "index.html";
+    }
+
+    lucide.createIcons();
+
+    const invoiceContainer = document.getElementById("invoiceContainer");
+    const customerContainer = document.getElementById("customerContainer");
+    const ordersBtn = document.getElementById("ordersBtn");
+    const updateBtn = document.getElementById("updateBtn");
+
+    document.addEventListener("DOMContentLoaded", () => {
+      fetchInvoices();
+    });
+
+    ordersBtn.addEventListener("click", () => {
+      ordersBtn.classList.add("active");
+      updateBtn.classList.remove("active");
+      invoiceContainer.style.display = "block";
+      customerContainer.style.display = "none";
+    });
+
+    updateBtn.addEventListener("click", () => {
+      updateBtn.classList.add("active");
+      ordersBtn.classList.remove("active");
+      invoiceContainer.style.display = "none";
+      customerContainer.style.display = "block";
+      fetchCustomerOrders();
+    });
+
+    async function fetchInvoices() {
+      try {
+        const res = await fetch("http://localhost:3010/api/invoices");
+        const invoices = await res.json();
+
+        invoiceContainer.innerHTML = ''; // clear
+        invoices.forEach(invoice => {
+          const statusClass = {
+            pending: "status-pending",
+            paid: "status-paid",
+            cancelled: "status-cancelled"
+          }[invoice.status.toLowerCase()] || "status-pending";
+
+          const orderDate = invoice.createdDate ? `<div class="meta-dates">Order Date: ${new Date(invoice.createdDate).toLocaleDateString()}</div>` : '';
+          const paymentDate = invoice.paymentDate ? `<div class="meta-dates">Payment Date: ${new Date(invoice.paymentDate).toLocaleDateString()}</div>` : '';
+
+          const card = document.createElement("div");
+          card.className = "invoice-card";
+          card.innerHTML = `
+          <div class="invoice-header">
+            <div>
+              <span class="vendor-name">Invoice #${invoice.invoiceNumber || invoice.id}</span><br />
+              <small style="color:#6b7280;font-size:0.85rem;">Vendor: ${invoice.vendorId}</small>
+            </div>
+            <span class="invoice-status ${statusClass}">${invoice.status}</span>
+          </div>
+          ${orderDate}
+          ${paymentDate}
+          <table class="item-table">
+            <thead>
+              <tr>
+                <th>Item</th>
+                <th>Qty</th>
+                <th>Rate</th>
+                <th>Total</th>
+              </tr>
+            </thead>
+            <tbody>
+              ${invoice.items.map(item => `
+                <tr>
+                  <td>${item.itemName}</td>
+                  <td>${item.quantity}</td>
+                  <td>₹${item.unitPrice}</td>
+                  <td>₹${item.unitPrice * item.quantity}</td>
+                </tr>
+              `).join("")}
+            </tbody>
+          </table>
+          <div class="invoice-footer">Total Amount: ₹${invoice.totalAmount}</div>
+          <div class="action-buttons">
+            ${invoice.status.toLowerCase() !== 'paid' ? `<button class="action-btn purchase-btn" onclick="purchaseInvoice('${invoice.invoiceNumber || invoice.id}')">Purchase</button>` : ''}
+            ${invoice.status.toLowerCase() !== 'paid' && invoice.status.toLowerCase() !== 'cancelled' ? `<button class="action-btn cancel-btn" onclick="cancelInvoice('${invoice.id}')">Cancel</button>` : ''}
+          </div>
+        `;
+          invoiceContainer.appendChild(card);
+        });
+      } catch (err) {
+        console.error("Failed to fetch invoices:", err);
+      }
+    }
+
+    async function fetchCustomerOrders() {
+      try {
+        const res = await fetch("http://localhost:3010/api/orders");
+        const orders = await res.json();
+
+        customerContainer.innerHTML = ''; // clear
+        orders.forEach(order => {
+          const card = document.createElement("div");
+          card.className = "invoice-card";
+          card.innerHTML = `
+          <div class="invoice-header">
+            <div>
+              <span class="vendor-name">Order #${order.orderNumber || order.id}</span><br />
+              <small style="color:#6b7280;font-size:0.85rem;">Customer: ${order.customer.name}</small>
+            </div>
+            <span class="invoice-status status-${order.orderStatus}">${order.orderStatus}</span>
+          </div>
+          <div class="meta-dates">Order Date: ${new Date(order.orderDate).toLocaleDateString()}</div>
+          <table class="item-table">
+            <thead>
+              <tr>
+                <th>Item</th>
+                <th>Qty</th>
+                <th>Price</th>
+              </tr>
+            </thead>
+            <tbody>
+              ${order.orderItems.map(item => `
+                <tr>
+                  <td>${item.item.name}</td>
+                  <td>${item.item.quantity}</td>
+                  <td>₹${item.item.price}</td>
+                </tr>
+              `).join("")}
+            </tbody>
+          </table>
+          <div class="invoice-footer">Total: ₹${order.totalAmount}</div>
+          <select class="status-dropdown" onchange="updateOrderStatus('${order.id}', this.value)">
+    <option disabled selected>Change Status</option>
+    <option value="OUT_FOR_DELIVERY">OUT_FOR_DELIVERY</option>
+    <option value="DISPATCHED">DISPATCHED</option>
+    <option value="DELIVERED">DELIVERED</option>
+    
+    
+  </select>
+        `;
+          customerContainer.appendChild(card);
+        });
+      } catch (err) {
+        console.error("Failed to fetch customer orders:", err);
+      }
+    }
+
+    async function purchaseInvoice(invoiceNumber) {
+      try {
+        await fetch(`http://localhost:3010/api/invoices/${invoiceNumber}/confirm-payment`, { method: "PUT" });
+        alert("Invoice purchased.");
+        location.reload();
+      } catch (err) {
+        console.error("Purchase error:", err);
+      }
+    }
+
+    async function cancelInvoice(id) {
+      try {
+        await fetch(`http://localhost:3010/api/invoices/${id}/cancel`, { method: "POST" });
+        alert("Invoice cancelled.");
+        location.reload();
+      } catch (err) {
+        console.error("Cancel error:", err);
+      }
+    }
+
+    async function updateOrderStatus(orderId, newStatus) {
+      try {
+        const res = await fetch(`http://localhost:3010/api/orders/${orderId}/status`, {
+          method: "PUT",
+          headers: { "Content-Type": "application/json" },
+          body: `"${newStatus.toString()}"`
+
+        });
+
+        if (res.ok) {
+          alert("Order status updated to " + newStatus);
+          fetchCustomerOrders(); // Refresh the view
+        } else {
+          alert("Failed to update status");
+        }
+      } catch (error) {
+        console.error("Error updating status:", error);
+      }
+    }
+
+  </script>
+
+</body>
+
+</html>
