@@ -147,6 +147,11 @@
 				<small>Name must be at least 3 characters.</small>
 			</div>
 
+			<div class="form-group">
+				<label for="username">Username</label>
+				<input type="text" id="username" placeholder="Enter your username" />
+			</div>
+			
 			<div class="form-group" id="emailGroup">
 				<label for="email">Email Address</label>
 				<input type="email" id="email" placeholder="Enter your email" />
@@ -177,7 +182,7 @@
 
 		<div class="switch-link">
 			<p>Already have an account?</p>
-			<button onclick="window.location.href='index.jsp'">Login</button>
+			<button onclick="window.location.href='index.html'">Login</button>
 		</div>
 		<div id="successModal"
 			style="display:none; position:fixed; top:0; left:0; width:100%; height:100%; background-color: rgba(0,0,0,0.6); align-items:center; justify-content:center;">
@@ -261,6 +266,8 @@
 
 			// Send data if valid
 			const userData = {
+				
+				username: document.getElementById("username").value.trim(),
 				name: document.getElementById("name").value.trim(),
 				email: document.getElementById("email").value.trim(),
 				phoneNumber: document.getElementById("phoneNumber").value.trim(),
@@ -295,7 +302,7 @@
 
 		function closeModal() {
 			document.getElementById("successModal").style.display = "none";
-			window.location.href = "index.jsp";
+			window.location.href = "index.html";
 		}
 
 	</script>

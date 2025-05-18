@@ -17,7 +17,16 @@ public class CustomerDTO {
         this.phoneNumber = phoneNumber;
     }
 
-    private String email;
+    private String username;
+    public String getUsername() {
+		return username;
+	}
+
+	public void setUsername(String username) {
+		this.username = username;
+	}
+
+	private String email;
     private String phoneNumber;
     private String address;
 

@@ -23,6 +23,7 @@ public class CustomerController {
 
 	@PostMapping("/register")
 	public ResponseEntity<Customer> createCustomer(@RequestBody Customer customer) {
+		System.out.println (customer.getUsername());
 		Customer createdCustomer = customerService.saveCustomer(customer);
 		return new ResponseEntity<>(createdCustomer, HttpStatus.CREATED);
 	}
@@ -30,12 +31,13 @@ public class CustomerController {
 	@PostMapping("/login")
 	public ResponseEntity<Customer> loginCustomer(@RequestBody LoginRequest loginRequest) {
 
-		Optional<Customer> customerOptional = customerService.findCustomerById(loginRequest.getId());
-
+//		Optional<Customer> customerOptional = customerService.findCustomerById(loginRequest.getId());
+		Optional<Customer> customerOptional = customerService.findCustomerByUsername(loginRequest.getUsername());
+		System.out.println(loginRequest.getUsername());
 		if (customerOptional.isPresent()) {
 			Customer customer = customerOptional.get();
 
-			if (customer.getEmail().equals(loginRequest.getPassword())) {
+			if (customer.getPassword().equals(loginRequest.getPassword())) {
 				
 //				customer.setPassword(null);
 

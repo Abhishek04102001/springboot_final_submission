@@ -31,4 +31,9 @@ public class CustomerService {
 		customerRepository.deleteById(id);
 	}
 
+	public Optional<Customer> findCustomerByUsername(String username) {
+		// TODO Auto-generated method stub
+		return customerRepository.findByUsername (username);
+	}
+
 }
