@@ -6,7 +6,9 @@ import org.springframework.stereotype.Service;
 import java.util.List;
 import java.util.Optional;
 
+import com.inventorymanagement.DTO.CustomerDTO;
 import com.inventorymanagement.entity.Customer;
+import com.inventorymanagement.exception.UsernameAlreadyExistsException;
 import com.inventorymanagement.repository.CustomerRepository;
 
 @Service
@@ -14,8 +16,15 @@ public class CustomerService {
 
 	@Autowired
 	private CustomerRepository customerRepository;
+	
+	CustomerDTO customerDTO = new CustomerDTO();
+	String username = customerDTO.getUsername();
 
-	public Customer saveCustomer(Customer customer) {
+	public Customer saveCustomer(Customer customer) throws UsernameAlreadyExistsException {
+		
+        if (customerRepository.existsByUsername(customerDTO.getUsername())) {
+            throw new UsernameAlreadyExistsException("Username already exists");
+        }
 		return customerRepository.save(customer);
 	}
 

@@ -2,332 +2,405 @@
 <html lang="en">
 
 <head>
-	<meta charset="UTF-8" />
-	<meta name="viewport" content="width=device-width, initial-scale=1.0" />
-	<title>Shopping Cart</title>
-
-	<!-- Google Fonts -->
-	<link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;600&display=swap" rel="stylesheet">
-
-	<!-- Lucide Icons CDN -->
-	<script src="https://unpkg.com/lucide@latest"></script>
-
-	<style>
-		* {
-			margin: 0;
-			padding: 0;
-			box-sizing: border-box;
-		}
-
-		body {
-			font-family: 'Inter', sans-serif;
-			background-color: #f4f6fa;
-			color: #333;
-		}
-
-		nav {
-			background-color: #4e54c8;
-			color: white;
-			padding: 15px 30px;
-			display: flex;
-			justify-content: space-between;
-			align-items: center;
-			box-shadow: 0 2px 8px rgba(0, 0, 0, 0.1);
-		}
-
-		.nav-left h1 {
-			font-size: 24px;
-			font-weight: 600;
-		}
-
-		.nav-right {
-			display: flex;
-			align-items: center;
-			gap: 20px;
-		}
-
-		.nav-icon {
-			display: flex;
-			align-items: center;
-			gap: 6px;
-			background: white;
-			color: #4e54c8;
-			padding: 8px 12px;
-			border-radius: 8px;
-			cursor: pointer;
-			font-weight: 500;
-			transition: background 0.2s;
-		}
-
-		.nav-icon:hover {
-			background: #e1e4f0;
-		}
-
-		.cart-container {
-			padding: 40px 30px;
-			max-width: 1000px;
-			margin: 0 auto;
-			display: flex;
-			flex-direction: column;
-		}
-
-		.cart-items {
-			background: white;
-			padding: 20px;
-			border-radius: 10px;
-			box-shadow: 0 4px 12px rgba(0, 0, 0, 0.08);
-			margin-bottom: 20px;
-		}
-
-		.cart-item {
-			display: flex;
-			justify-content: space-between;
-			padding: 15px 0;
-			border-bottom: 1px solid #ddd;
-		}
-
-		.cart-item:last-child {
-			border-bottom: none;
-		}
-
-		.cart-item h4 {
-			font-size: 16px;
-		}
-
-		.cart-item button {
-			background-color: #f44336;
-			color: white;
-			border: none;
-			padding: 6px 12px;
-			border-radius: 6px;
-			cursor: pointer;
-		}
-
-		.cart-item button:hover {
-			background-color: #d32f2f;
-		}
-
-		.total-price {
-			text-align: right;
-			margin-top: 20px;
-			font-size: 20px;
-			font-weight: 600;
-		}
-
-		.checkout-btn {
-			background-color: #4e54c8;
-			color: white;
-			padding: 10px 20px;
-			border: none;
-			border-radius: 10px;
-			cursor: pointer;
-			margin-top: 30px;
-			width: 100%;
-			font-size: 18px;
-		}
-
-		.checkout-btn:hover {
-			background-color: #3e42a1;
-		}
-
-		.nav-icon a {
-			display: flex;
-			align-items: center;
-			gap: 6px;
-			color: inherit;
-			text-decoration: none;
-		}
-	</style>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>Shopping Cart</title>
+  <script src="https://unpkg.com/@tailwindcss/browser@4"></script>
+  <script src="https://unpkg.com/lucide@latest"></script>
+  <link href="https://fonts.googleapis.com/css2?family=Poppins:wght@400;600;700&display=swap" rel="stylesheet">
+  <style>
+    /* Fade-in animation for pop-up */
+    @keyframes fadeInScale {
+      from { opacity: 0; transform: scale(0.9); }
+      to { opacity: 1; transform: scale(1); }
+    }
+    .popup-container {
+      animation: fadeInScale 0.3s ease-out forwards;
+    }
+    /* Glassmorphism and hover effects for cart items */
+    .cart-item {
+      background: linear-gradient(145deg, rgba(30, 41, 59, 0.9), rgba(55, 65, 81, 0.7));
+      backdrop-filter: blur(8px);
+      border: 1px solid rgba(99, 102, 241, 0.2);
+      transition: transform 0.3s ease, box-shadow 0.3s ease;
+    }
+    .cart-item:hover {
+      transform: scale(1.02);
+      box-shadow: 0 8px 16px rgba(0, 0, 0, 0.2);
+    }
+    /* Cart container gradient overlay */
+    .cart-container {
+      position: relative;
+      overflow: hidden;
+    }
+    .cart-container::before {
+      content: '';
+      position: absolute;
+      top: 0;
+      left: 0;
+      right: 0;
+      bottom: 0;
+      background: linear-gradient(180deg, rgba(99, 102, 241, 0.1), rgba(139, 92, 246, 0.1));
+      z-index: -1;
+    }
+    /* Styling for "Your Cart" and "Total" text */
+    .cart-title {
+      font-family: 'Segoe UI', sans-serif;
+      font-size: 2rem;
+      font-weight: 700;
+      background: linear-gradient(90deg, rgb(0, 0, 0), #818cf8);
+      -webkit-background-clip: text;
+      background-clip: text;
+      color: transparent;
+      text-shadow: 0 2px 4px rgba(0, 0, 0, 0.2);
+      animation: slideIn 0.5s ease-out;
+      letter-spacing: 0.05em;
+    }
+    .total-text {
+      font-family: 'Segoe UI', sans-serif;
+      font-size: 1.25rem;
+      font-weight: 600;
+      background: linear-gradient(90deg, rgb(0, 0, 0), #818cf8);
+      -webkit-background-clip: text;
+      background-clip: text;
+      color: green;
+      text-shadow: 0 2px 4px rgba(0, 0, 0, 0.2);
+      animation: slideIn 0.5s ease-out;
+      letter-spacing: 0.05em;
+    }
+    @keyframes slideIn {
+      from { transform: translateY(10px); opacity: 0; }
+      to { transform: translateY(0); opacity: 1; }
+    }
+    /* Logo styling */
+    .logo-text {
+      font-family: 'Poppins', sans-serif;
+      font-weight: 700;
+      background: linear-gradient(to right, #fb923c, #f87171); /* orange-400 to red-400 */
+      -webkit-background-clip: text;
+      -webkit-text-fill-color: transparent;
+      text-shadow: 0 2px 4px rgba(0, 0, 0, 0.2);
+      position: relative;
+      display: inline-block;
+      transition: transform 0.2s ease;
+    }
+    .logo-text:hover {
+      transform: scale(1.05);
+    }
+    .logo-text::after {
+      content: '';
+      position: absolute;
+      bottom: -4px;
+      left: 0;
+      width: 100%;
+      height: 2px;
+      background: linear-gradient(to right, #fb923c, #f87171);
+      border-radius: 1px;
+    }
+    .logo-icon {
+      display: inline-block;
+      width: 2rem; /* w-8 */
+      height: 2rem; /* h-8 */
+    }
+    @media (max-width: 640px) {
+      .logo-icon {
+        width: 1.5rem; /* w-6 */
+        height: 1.5rem; /* h-6 */
+      }
+    }
+  </style>
 </head>
 
-<body>
+<body class="min-h-screen bg-gradient-to-br from-blue-200 to-purple-400 text-white font-sans">
+  <!-- Navigation Bar -->
+  <nav class="bg-slate-900 flex items-center justify-between px-8 py-4 shadow-lg">
+    <a href="home.html" class="flex items-center gap-2 px-2 py-1 rounded-lg bg-slate-800/50 no-underline">
+      <svg class="logo-icon" data-lucide="apple">
+        <defs>
+          <linearGradient id="apple-gradient" x1="0%" y1="0%" x2="100%" y2="100%">
+            <stop offset="0%" style="stop-color:#fb923c" /> <!-- orange-400 -->
+            <stop offset="100%" style="stop-color:#f87171" /> <!-- red-400 -->
+          </linearGradient>
+        </defs>
+        <path fill="url(#apple-gradient)" d="M12 20.94c1.5 0 2.75-.4 3.69-1.06a6 6 0 0 0 2.28-2.75c-2.02-.14-3.88-1.3-4.81-3.28-.88-1.88-.56-4.06.88-5.62A5.94 5.94 0 0 0 9.25 6.5c-1.5.25-2.88 1-3.88 2.12-1.38 1.62-2 3.88-1.62 6.25.38 2.25 1.56 4.25 3.44 5.56.94.66 2.06.94 3.31.94Z"/>
+        <path fill="url(#apple-gradient)" d="M12 8.94c.5-1.75 1.56-3.38 3.19-4.44-.75 1.88-1.88 3.5-3.38 4.56-1.5 1.12-2.94 1.94-4.06 1.94.88 1.25 2.38 2.12 4.25 1.94Z"/>
+      </svg>
+      <span class="logo-text text-2xl sm:text-3xl">Fruitful</span>
+    </a>
+    <div class="flex items-center gap-4">
+      <div
+        class="rounded-full bg-gradient-to-r from-indigo-400 to-indigo-900 text-white px-4 py-2 flex items-center gap-2 cursor-pointer hover:opacity-90">
+        <a href="cart.html" class="flex items-center gap-2 text-white no-underline">
+          <i data-lucide="shopping-cart"></i>
+        </a>
+      </div>
+      <div
+        class="rounded-full bg-gradient-to-r from-indigo-400 to-indigo-900 text-white px-4 py-2 flex items-center gap-2 cursor-pointer hover:opacity-90">
+        <a href="profile.html" class="flex items-center gap-2 text-white no-underline">
+          <i data-lucide="user"></i>
+        </a>
+      </div>
+      <div
+        class="rounded-full bg-gradient-to-r from-indigo-400 to-indigo-900 text-white px-4 py-2 flex items-center gap-2 cursor-pointer hover:opacity-90">
+        <a href="#" onclick="logout()" class="flex items-center gap-2 text-white no-underline">
+         <i data-lucide="power"></i>
+          <span class="font-medium">Logout</span>
+        </a>
+      </div>
+    </div>
+  </nav>
 
-	<!-- Navigation Bar -->
-	<nav>
-		<div class="nav-left">
-			<h1>Inventory</h1>
-		</div>
-		<div class="nav-right">
-			<div class="nav-icon">
-				<a href="profile.html"> <i data-lucide="user"></i> <span>Profile</span>
-				</a>
-			</div>
-			<div class="nav-icon">
-				<a href="cart.html"> <i data-lucide="shopping-cart"></i> <span>Cart</span>
-				</a>
-			</div>
-		</div>
-	</nav>
+  <!-- Pop-up for logout success -->
+  <div id="successPopup" class="fixed inset-0 flex items-center justify-center bg-black/50 hidden">
+    <div class="popup-container w-full max-w-sm rounded-2xl bg-slate-900 p-6 text-indigo-300 shadow-lg">
+      <h2 class="text-center text-xl font-semibold text-white mb-4">Logout Successful!</h2>
+      <p id="popupMessage" class="text-center text-sm mb-6"></p>
+      <button id="closePopup" class="w-full rounded-full bg-gradient-to-r from-indigo-400 to-indigo-900 py-2 font-medium tracking-wide text-white hover:opacity-90">Continue</button>
+    </div>
+  </div>
 
-	<!-- Cart Page -->
-	<div class="cart-container">
-		<h2>Your Cart</h2>
-		<div class="cart-items" id="cartItems"></div>
-		<div class="total-price" id="totalPrice">Total: ₹0</div>
-		<button class="checkout-btn" onclick="proceedToCheckout()">Proceed to Checkout</button>
-	</div>
+  <!-- Pop-up for error messages -->
+  <div id="errorPopup" class="fixed inset-0 flex items-center justify-center bg-black/50 hidden">
+    <div class="popup-container w-full max-w-sm rounded-2xl bg-slate-900 p-6 text-indigo-300 shadow-lg">
+      <h2 class="text-center text-xl font-semibold text-white mb-4">Error</h2>
+      <p id="errorPopupMessage" class="text-center text-sm mb-6"></p>
+      <button id="closeErrorPopup" class="w-full rounded-full bg-gradient-to-r from-indigo-400 to-indigo-900 py-2 font-medium tracking-wide text-white hover:opacity-90">OK</button>
+    </div>
+  </div>
 
-	<!-- Modal -->
-	<div id="checkoutModal" style="display: none; position: fixed; top: 0; left: 0; 
-  width: 100%; height: 100%; background-color: rgba(0, 0, 0, 0.5); 
-  justify-content: center; align-items: center; z-index: 9999;">
-		<div style="background-color: white; padding: 30px 40px; border-radius: 10px; text-align: center;">
-			<h2>Order placed successfully!</h2>
-			<button onclick="closeModal()"
-				style="margin-top: 20px; padding: 10px 20px; background-color: #4e54c8; color: white; border: none; border-radius: 6px; cursor: pointer;">OK</button>
-		</div>
-	</div>
+  <!-- Pop-up for confirmation -->
+  <div id="confirmPopup" class="fixed inset-0 flex items-center justify-center bg-black/50 hidden">
+    <div class="popup-container w-full max-w-sm rounded-2xl bg-slate-900 p-6 text-indigo-300 shadow-lg">
+      <h2 class="text-center text-xl font-semibold text-white mb-4">Confirm</h2>
+      <p id="confirmPopupMessage" class="text-center text-sm mb-6"></p>
+      <div class="flex gap-4">
+        <button id="confirmYes" class="flex-1 rounded-full bg-gradient-to-r from-indigo-400 to-indigo-900 py-2 font-medium tracking-wide text-white hover:opacity-90">Yes</button>
+        <button id="confirmNo" class="flex-1 rounded-full bg-gray-600 py-2 font-medium tracking-wide text-white hover:opacity-90">No</button>
+      </div>
+    </div>
+  </div>
 
+  <!-- Cart Page -->
+  <div class="max-w-4xl mx-auto p-10">
+    <h2 class="cart-title mb-6">Your Cart</h2>
+    <div class="cart-container bg-slate-900 text-indigo-300 p-6 rounded-2xl shadow-xl mb-6" id="cartItems"></div>
+    <div class="total-text text-right mb-8" id="totalPrice">Total: ₹0</div>
+    <button class="w-full rounded-full bg-gradient-to-r from-indigo-400 to-indigo-900 py-2 font-medium tracking-wide text-white hover:opacity-90"
+      onclick="proceedToCheckout()">Proceed to Checkout</button>
+  </div>
 
-	<!-- Script -->
-	<script>
-		lucide.createIcons();
+  <!-- Modal -->
+  <div id="checkoutModal"
+    class="fixed inset-0 bg-black bg-opacity-50 hidden justify-center items-center z-50">
+    <div class="bg-slate-900 text-indigo-300 p-8 rounded-2xl shadow-lg text-center">
+      <h2 class="text-white text-xl font-semibold mb-6">Order placed successfully!</h2>
+      <button onclick="closeModal()"
+        class="rounded-full bg-gradient-to-r from-indigo-400 to-indigo-900 py-2 px-6 font-medium tracking-wide text-white hover:opacity-90">OK</button>
+    </div>
+  </div>
 
-		const customerId = localStorage.getItem("customerId");
-		let cart = [];
+  <script>
+    lucide.createIcons();
 
-		async function fetchCartItems() {
-			try {
-				const response = await fetch(`http://localhost:3010/api/cart/${customerId}/items`);
-				if (!response.ok) throw new Error("Failed to load cart items");
+    const customerId = localStorage.getItem("customerId");
+    let cart = [];
 
-				cart = await response.json();
-				renderCartItems();
-			} catch (err) {
-				console.error("Error:", err);
-				document.getElementById("cartItems").innerHTML = "<p>Error loading cart items.</p>";
-			}
-		}
+    function showErrorPopup(message) {
+      const popup = document.getElementById("errorPopup");
+      const popupMessage = document.getElementById("errorPopupMessage");
+      const closeButton = document.getElementById("closeErrorPopup");
 
-		function renderCartItems() {
-			const cartItemsContainer = document.getElementById("cartItems");
-			cartItemsContainer.innerHTML = "";
+      popupMessage.textContent = message;
+      popup.classList.remove("hidden");
 
-			let total = 0;
+      closeButton.onclick = () => {
+        popup.classList.add("hidden");
+      };
+    }
 
-			if (cart.length === 0) {
-				cartItemsContainer.innerHTML = "<p>Your cart is empty.</p>";
-				document.getElementById("totalPrice").innerText = "Total: ₹0";
-				return;
-			}
+    function showConfirmPopup(message, onConfirm) {
+      const popup = document.getElementById("confirmPopup");
+      const popupMessage = document.getElementById("confirmPopupMessage");
+      const yesButton = document.getElementById("confirmYes");
+      const noButton = document.getElementById("confirmNo");
 
-			cart.forEach(ci => {
-				const item = ci.item;
-				const price = item.price * ci.quantity;
-				total += price;
+      popupMessage.textContent = message;
+      popup.classList.remove("hidden");
 
-				const cartItemDiv = document.createElement("div");
-				cartItemDiv.classList.add("cart-item");
+      yesButton.onclick = () => {
+        popup.classList.add("hidden");
+        onConfirm();
+      };
 
-				cartItemDiv.innerHTML = `
-		  <h4>${item.name} - ₹${item.price}</h4>
-		  <div style="display: flex; align-items: center; gap: 10px;">
-		    <button onclick="updateQuantity(${ci.id}, ${ci.quantity - 1})"
-		      style="padding: 5px 10px; background-color: #ccc; border: none; border-radius: 4px; cursor: pointer;">−</button>
-		    <span>${ci.quantity}</span>
-		    <button onclick="updateQuantity(${ci.id}, ${ci.quantity + 1})"
-		      style="padding: 5px 10px; background-color: #4e54c8; color: white; border: none; border-radius: 4px; cursor: pointer;">+</button>
-		  </div>
-		`;
+      noButton.onclick = () => {
+        popup.classList.add("hidden");
+      };
+    }
 
+    async function fetchCartItems() {
+      try {
+        const response = await fetch(`http://localhost:3010/api/cart/${customerId}/items`);
+        if (!response.ok) throw new Error("Failed to load cart items");
 
-				cartItemsContainer.appendChild(cartItemDiv);
-			});
+        cart = await response.json();
+        renderCartItems();
+      } catch (err) {
+        console.error("Error:", err);
+        document.getElementById("cartItems").innerHTML = "<p class='text-red-300 font-medium text-center'>Error loading cart items.</p>";
+      }
+    }
+	
+    function renderCartItems() {
+      const cartItemsContainer = document.getElementById("cartItems");
+      cartItemsContainer.innerHTML = "";
 
-			document.getElementById("totalPrice").innerText = `Total: ₹${total}`;
-		}
+      let total = 0;
 
-		async function removeItemFromCart(cartItemId) {
-			try {
-				const res = await fetch(`http://localhost:3010/api/cart/item/${cartItemId}`, {
-					method: "DELETE"
-				});
-				if (!res.ok) throw new Error("Failed to remove item");
-				cart = cart.filter(item => item.id !== cartItemId);
-				renderCartItems();
-			} catch (err) {
-				console.error("Error removing item:", err);
-			}
-		}
+      if (cart.length === 0) {
+        cartItemsContainer.innerHTML = "<p class='text-indigo-300 text-sm text-center font-medium'>Your cart is empty.</p>";
+        document.getElementById("totalPrice").innerText = "Total: ₹0";
+        return;
+      }
 
+      cart.forEach(ci => {
+        const item = ci.item;
+        const price = item.price * ci.quantity;
+        total += price;
 
-		async function proceedToCheckout() {
-			if (cart.length === 0) {
-				alert("Your cart is empty. Add items before checkout.");
-				return;
-			}
+        const cartItemDiv = document.createElement("div");
+        cartItemDiv.classList.add("cart-item", "flex", "justify-between", "items-center", "p-4", "mb-3", "rounded-xl");
 
-			try {
-				const response = await fetch(`http://localhost:3010/api/orders/checkout/${customerId}`, {
-					method: "POST"
-				});
+        cartItemDiv.innerHTML = `
+          <div class="flex items-center gap-3">
+            <span class="text-white text-sm font-semibold">${item.name}</span>
+            <span class="text-indigo-300 text-xs">₹${item.price}</span>
+          </div>
+          <div class="flex items-center gap-2">
+            <button onclick="updateQuantity(${ci.id}, ${ci.quantity - 1})"
+              class="rounded-full bg-indigo-100 text-indigo-700 w-8 h-8 flex items-center justify-center text-sm hover:bg-indigo-200 transition-colors">−</button>
+            <span class="text-indigo-300 text-sm font-medium w-8 text-center">${ci.quantity}</span>
+            <button onclick="updateQuantity(${ci.id}, ${ci.quantity + 1})"
+              class="rounded-full bg-gradient-to-r from-indigo-400 to-indigo-900 w-8 h-8 flex items-center justify-center text-sm text-white hover:opacity-90 transition-opacity">+</button>
+          </div>
+        `;
 
-				const data = await response.json();
+        cartItemsContainer.appendChild(cartItemDiv);
+      });
 
-				if (response.ok) {
-					document.getElementById("checkoutModal").style.display = "flex";
-				} else {
-					alert(data.error || "Checkout failed.");
-				}
-			} catch (err) {
-				console.error("Checkout error:", err);
-				alert("An error occurred during checkout.");
-			}
-		}
+      document.getElementById("totalPrice").innerText = `Total: ₹${total}`;
+    }
 
-		function closeModal() {
-			document.getElementById("checkoutModal").style.display = "none";
-			cart = [];
-			renderCartItems();
-		}
+    async function removeItemFromCart(cartItemId) {
+      try {
+        const res = await fetch(`http://localhost:3010/api/cart/item/${cartItemId}`, {
+          method: "DELETE"
+        });
+        if (!res.ok) throw new Error("Failed to remove item");
+        cart = cart.filter(item => item.id !== cartItemId);
+        renderCartItems();
+      } catch (err) {
+        console.error("Error removing item:", err);
+        showErrorPopup("Failed to remove item from cart.");
+      }
+    }
 
-		async function updateQuantity(cartItemId, newQty) {
-			const cartItem = cart.find(item => item.id === cartItemId);
-			if (!cartItem) return alert("Item not found.");
+    async function proceedToCheckout() {
+      if (cart.length === 0) {
+        showErrorPopup("Your cart is empty. Add items before checkout.");
+        return;
+      }
 
-			const availableStock = cartItem.item.quantity; // total stock
-			const customerId = localStorage.getItem("customerId");
+      try {
+        const response = await fetch(`http://localhost:3010/api/orders/checkout/${customerId}`, {
+          method: "POST"
+        });
 
-			if (newQty > availableStock) {
-				alert(`Only ${availableStock} units available in stock.`);
-				return;
-			}
+        const data = await response.json();
 
-			if (newQty < 1) {
-				const confirmed = confirm("Quantity is zero. Remove item from cart?");
-				if (!confirmed) return;
-				return removeItemFromCart(cartItemId);
-			}
+        if (response.ok) {
+          document.getElementById("checkoutModal").style.display = "flex";
+        } else {
+          showErrorPopup(data.error || "Checkout failed.");
+        }
+      } catch (err) {
+        console.error("Checkout error:", err);
+        showErrorPopup("An error occurred during checkout.");
+      }
+    }
 
-			const deltaQty = newQty - cartItem.quantity;
-			if (deltaQty === 0) return;
+    function closeModal() {
+      document.getElementById("checkoutModal").style.display = "none";
+      cart = [];
+      renderCartItems();
+    }
 
-			try {
-				const res = await fetch("http://localhost:3010/api/cart/add", {
-					method: "POST",
-					headers: {
-						"Content-Type": "application/json"
-					},
-					body: JSON.stringify({
-						customerId: parseInt(customerId),
-						items: [{itemId: cartItem.item.id, quantity: deltaQty}]
-					})
-				});
+    async function updateQuantity(cartItemId, newQty) {
+      const cartItem = cart.find(item => item.id === cartItemId);
+      if (!cartItem) {
+        showErrorPopup("Item not found.");
+        return;
+      }
 
-				if (!res.ok) throw new Error("Failed to update quantity");
+      const availableStock = cartItem.item.quantity; // total stock
+      const customerId = localStorage.getItem("customerId");
 
-				cartItem.quantity = newQty;
-				renderCartItems();
-			} catch (err) {
-				console.error("Quantity update error:", err);
-				alert("Could not update quantity.");
-			}
-		}
+      if (newQty > availableStock) {
+        showErrorPopup(`Only ${availableStock} units available in stock.`);
+        return;
+      }
 
+      if (newQty < 1) {
+        showConfirmPopup("Quantity is zero. Remove item from cart?", () => {
+          removeItemFromCart(cartItemId);
+        });
+        return;
+      }
 
+      const deltaQty = newQty - cartItem.quantity;
+      if (deltaQty === 0) return;
 
-		fetchCartItems();
-	</script>
+      try {
+        const res = await fetch("http://localhost:3010/api/cart/add", {
+          method: "POST",
+          headers: {
+            "Content-Type": "application/json"
+          },
+          body: JSON.stringify({
+            customerId: parseInt(customerId),
+            items: [{ itemId: cartItem.item.id, quantity: deltaQty }]
+          })
+        });
+
+        if (!res.ok) throw new Error("Failed to update quantity");
+
+        cartItem.quantity = newQty;
+        renderCartItems();
+      } catch (err) {
+        console.error("Quantity update error:", err);
+        showErrorPopup("Could not update quantity.");
+      }
+    }
+
+    function logout() {
+      function showPopup(message, redirectUrl) {
+        const popup = document.getElementById("successPopup");
+        const popupMessage = document.getElementById("popupMessage");
+        const closeButton = document.getElementById("closePopup");
+
+        popupMessage.textContent = message;
+        popup.classList.remove("hidden");
+
+        closeButton.onclick = () => {
+          popup.classList.add("hidden");
+          window.location.href = redirectUrl;
+        };
+      }
+
+      showPopup("Logged out successfully!", "index.html");
+    }
+
+    fetchCartItems();
+  </script>
 </body>
 
 </html>

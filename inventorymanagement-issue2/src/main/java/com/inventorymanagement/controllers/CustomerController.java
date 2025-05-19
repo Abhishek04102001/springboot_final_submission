@@ -8,9 +8,12 @@ import org.springframework.web.bind.annotation.*;
 
 import com.inventorymanagement.DTO.LoginRequest;
 import com.inventorymanagement.entity.Customer;
+import com.inventorymanagement.repository.CustomerRepository;
 import com.inventorymanagement.service.CustomerService;
 
+import java.util.HashMap;
 import java.util.List;
+import java.util.Map;
 import java.util.Optional;
 
 @RestController
@@ -20,6 +23,9 @@ public class CustomerController {
 
 	@Autowired
 	private CustomerService customerService;
+	
+	@Autowired
+	private CustomerRepository customerRepo;
 
 	@PostMapping("/register")
 	public ResponseEntity<Customer> createCustomer(@RequestBody Customer customer) {
@@ -108,6 +114,14 @@ public class CustomerController {
 		} else {
 			return new ResponseEntity<>(HttpStatus.NOT_FOUND);
 		}
+	}
+	
+	@GetMapping("/check-username")
+	public ResponseEntity<Map<String, Boolean>> checkUsername(@RequestParam String username) {
+	    boolean exists = customerRepo.existsByUsername(username);
+	    Map<String, Boolean> response = new HashMap<>();
+	    response.put("exists", exists);
+	    return ResponseEntity.ok(response);
 	}
 
 

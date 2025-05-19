@@ -5,564 +5,174 @@
     <meta charset="UTF-8" />
     <meta name="viewport" content="width=device-width, initial-scale=1.0" />
     <title>Customer Profile</title>
-
-    <!-- Google Fonts -->
-    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;600&display=swap" rel="stylesheet" />
-
-    <!-- Lucide Icons -->
+    <script src="https://unpkg.com/@tailwindcss/browser@4"></script>
     <script src="https://unpkg.com/lucide@latest"></script>
-
+    <link href="https://fonts.googleapis.com/css2?family=Poppins:wght@400;600;700&display=swap" rel="stylesheet">
     <style>
-        * {
-            margin: 0;
-            padding: 0;
-            box-sizing: border-box;
+        /* Animation for expanding/collapsing order details */
+        @keyframes slideDown {
+            from { max-height: 0; opacity: 0; }
+            to { max-height: 500px; opacity: 1; }
         }
-
-        body {
-            font-family: 'Inter', sans-serif;
-            background-color: #f4f6fa;
-            color: #333;
+        @keyframes slideUp {
+            from { max-height: 500px; opacity: 1; }
+            to { max-height: 0; opacity: 0; }
         }
-
-        nav {
-            background-color: #4e54c8;
-            color: white;
-            padding: 15px 30px;
-            display: flex;
-            justify-content: space-between;
-            align-items: center;
-            box-shadow: 0 2px 8px rgba(0, 0, 0, 0.1);
+        .order-details {
+            overflow: hidden;
+            transition: max-height 0.3s ease-in-out, opacity 0.3s ease-in-out;
         }
-
-        .nav-left h1 {
-            font-size: 24px;
-            font-weight: 600;
+        .order-details.hidden {
+            max-height: 0;
+            opacity: 0;
         }
-
-        .nav-right {
-            display: flex;
-            align-items: center;
-            gap: 20px;
+        .order-details:not(.hidden) {
+            animation: slideDown 0.3s ease-in-out forwards;
         }
-
-        .nav-right input {
-            padding: 8px 12px;
-            border-radius: 6px;
-            border: none;
-            outline: none;
-            font-size: 14px;
-            width: 200px;
+        /* Fade-in animation for pop-up */
+        @keyframes fadeInScale {
+            from { opacity: 0; transform: scale(0.9); }
+            to { opacity: 1; transform: scale(1); }
         }
-
-        .nav-icon {
-            display: flex;
-            align-items: center;
-            gap: 6px;
-            background: white;
-            color: #4e54c8;
-            padding: 8px 12px;
-            border-radius: 8px;
-            cursor: pointer;
-            font-weight: 500;
-            transition: background 0.2s;
+        .popup-container {
+            animation: fadeInScale 0.3s ease-out forwards;
         }
-
-        .nav-icon:hover {
-            background: #e1e4f0;
-        }
-
-        .nav-icon a {
-            color: inherit;
-            text-decoration: none;
-            display: flex;
-            align-items: center;
-            gap: 6px;
-        }
-
-        .container {
-            display: flex;
-            height: calc(100vh - 70px);
-        }
-
-        .sidebar {
-            width: 220px;
-            background-color: white;
-            border-right: 1px solid #ddd;
-            padding: 20px;
-            box-shadow: 2px 0 4px rgba(0, 0, 0, 0.05);
-        }
-
-        .sidebar h2 {
-            margin-bottom: 20px;
-            font-size: 18px;
-        }
-
-        .sidebar button {
-            display: block;
-            width: 100%;
-            padding: 10px 12px;
-            margin-bottom: 10px;
-            border: none;
-            background-color: #f0f2f5;
-            color: #333;
-            text-align: left;
-            font-size: 15px;
-            border-radius: 6px;
-            cursor: pointer;
-            transition: background-color 0.2s;
-        }
-
-        .sidebar button.active,
-        .sidebar button:hover {
-            background-color: #4e54c8;
-            color: white;
-        }
-
-        .main-content {
-            flex: 1;
-            padding: 30px;
-            overflow-y: auto;
-        }
-
-        .order-card {
-            background: white;
-            border: 1px solid #ddd;
-            padding: 16px;
-            margin-bottom: 16px;
-            border-radius: 8px;
-            box-shadow: 0 1px 4px rgba(0, 0, 0, 0.1);
-        }
-
-        .order-card h3 {
-            margin-bottom: 8px;
-        }
-
-        .order-card ul {
-            padding-left: 20px;
-            list-style: disc;
-        }
-
-        .input {
-            width: 100%;
-            padding: 10px 12px;
-            font-size: 15px;
-            border: 1px solid #ccc;
-            border-radius: 6px;
-            margin-top: 4px;
-        }
-
-        .input:focus {
-            border-color: #4e54c8;
-            outline: none;
-            box-shadow: 0 0 0 2px #ececff;
-        }
-
-        .submit-btn {
-            background-color: #4e54c8;
-            color: white;
-            padding: 10px 18px;
-            font-size: 15px;
-            border: none;
-            border-radius: 6px;
-            cursor: pointer;
-            transition: background-color 0.2s ease;
-        }
-
-        .submit-btn:hover {
-            background-color: #3c41b2;
-        }
-
-        .form-wrapper {
-            display: flex;
-            justify-content: center;
-            /* align-items: center; */
-            /* height: 100%; */
-        }
-
-        .form-wrapper>div {
-            width: 60%;
-            background-color: white;
-            padding: 40px;
-            border-radius: 12px;
-            box-shadow: 0 4px 10px rgba(0, 0, 0, 0.1);
-        }
-
-        #updateForm {
-            width: 100%;
-        }
-
-        .input {
-            width: 100%;
-            padding: 10px;
-            border: 1px solid #ccc;
-            border-radius: 6px;
-            font-size: 1rem;
-            box-sizing: border-box;
-        }
-
-        .submit-btn {
-            background-color: #4f46e5;
-            color: white;
-            padding: 10px 20px;
-            border: none;
-            border-radius: 6px;
-            font-size: 1rem;
-            cursor: pointer;
-            margin-top: 20px;
-            width: 100%;
-            transition: background-color 0.3s ease;
-        }
-
-        .submit-btn:hover {
-            background-color: #4338ca;
-        }
-
-        .cancel-btn {
-            color: red;
-            border: 1px solid red;
-            background: none;
-            padding: 4px 8px;
-            border-radius: 6px;
-            font-size: 0.9rem;
-            cursor: pointer;
-        }
-
-        .cancel-btn:hover {
-            background-color: rgba(255, 0, 0, 0.05);
-        }
-
-        .order-list {
-            display: grid;
-            grid-template-columns: repeat(auto-fit, minmax(350px, 1fr));
-            gap: 24px;
-            padding: 20px;
-        }
-
-        .order-card {
-            background: #f9fafb;
-            border-radius: 16px;
-            padding: 20px;
-            box-shadow: 0 4px 14px rgba(0, 0, 0, 0.08);
-            border: 1px solid #e5e7eb;
-            transition: 0.3s ease;
-            display: flex;
-            flex-direction: column;
-            gap: 10px;
-            position: relative;
-        }
-
-        .order-card:hover {
-            transform: translateY(-4px);
-            box-shadow: 0 6px 20px rgba(0, 0, 0, 0.1);
-        }
-
-        .order-header {
-            display: flex;
-            justify-content: space-between;
-            align-items: center;
-        }
-
-        .order-header h3 {
-            font-size: 1.2rem;
-            font-weight: 600;
-            color: #111827;
-        }
-
-        .cancel-btn {
-            color: #dc2626;
-            border: 1px solid #dc2626;
-            background: transparent;
-            padding: 6px 12px;
-            border-radius: 8px;
-            font-size: 0.85rem;
-            cursor: pointer;
-            transition: 0.2s ease;
-        }
-
-        .cancel-btn:hover {
-            background-color: rgba(220, 38, 38, 0.05);
-        }
-
-        .order-status {
-            display: inline-block;
-            align-self: flex-start;
-            font-size: 0.75rem;
-            font-weight: 600;
-            padding: 4px 10px;
-            border-radius: 999px;
-            background-color: #e0f2fe;
-            color: #0284c7;
-            margin-bottom: 8px;
-        }
-
-        .order-card p {
-            margin: 0;
-            color: #374151;
-            font-size: 0.9rem;
-        }
-
-        .order-card h4 {
-            margin-top: 10px;
-            font-size: 1rem;
-            font-weight: 600;
-            color: #111827;
-        }
-
-        .order-card ul {
-            margin: 0;
-            padding-left: 18px;
-            font-size: 0.9rem;
-            color: #4b5563;
-        }
-
-        .order-footer {
-            margin-top: 10px;
-            padding-top: 10px;
-            border-top: 1px solid #e5e7eb;
-            font-weight: bold;
-            font-size: 1rem;
-            color: #111827;
-        }
-
-        .item-table {
-            display: flex;
-            flex-direction: column;
-            gap: 8px;
-            margin-top: 8px;
-            background-color: #f3f4f6;
-            padding: 10px;
-            border-radius: 10px;
-        }
-
-        .item-row {
-            display: grid;
-            grid-template-columns: 2fr 1fr 1fr 1fr;
-            font-size: 0.9rem;
-            padding: 4px 8px;
-            border-bottom: 1px solid #e5e7eb;
-        }
-
-        .item-row:last-child {
-            border-bottom: none;
-        }
-
-        .item-header {
-            font-weight: 600;
-            background-color: #e5e7eb;
-            border-radius: 6px;
-        }
-
-        .order-wrapper {
-            border: 1px solid #e2e8f0;
-            border-radius: 12px;
-            padding: 16px;
-            margin-bottom: 20px;
-            background-color: #f9fafb;
-            max-width: 700px;
-            font-family: Arial, sans-serif;
-            width: 100%;
-        }
-
-        .order-status {
-            font-size: 0.9rem;
-            color: #4b5563;
-            margin-bottom: 10px;
-            font-weight: 600;
-            text-transform: uppercase;
-            letter-spacing: 1px;
-        }
-
-        .order-container {
-            display: flex;
-            justify-content: space-between;
-            gap: 20px;
-            align-items: flex-start;
-        }
-
-        .order-left {
-            display: flex;
-            flex-direction: column;
-            gap: 12px;
-            flex: 1 1 auto;
-        }
-
-        .item-box {
-            display: flex;
-            align-items: center;
-            background-color: white;
-            padding: 10px;
-            border-radius: 10px;
-            box-shadow: 0 0 4px rgba(0, 0, 0, 0.05);
-        }
-
-        .item-box img {
-            width: 50px;
-            height: 50px;
-            object-fit: cover;
-            border-radius: 6px;
-            margin-right: 10px;
-        }
-
-        .item-info .arrival {
-            font-weight: 600;
-            font-size: 0.95rem;
-            margin: 0;
-        }
-
-        .item-info .time-slot {
-            font-size: 0.8rem;
-            color: #6b7280;
-            margin: 2px 0 0 0;
-        }
-
-        .order-right {
-            display: flex;
-            flex-direction: column;
-            gap: 10px;
-            align-items: flex-start;
-            min-width: 150px;
-        }
-
-        .track-btn {
-            background-color: #6dbb3c;
-            color: white;
-            padding: 8px 14px;
-            border: none;
-            border-radius: 6px;
-            cursor: pointer;
-            font-weight: 600;
-            font-size: 0.9rem;
-            width: 100%;
-            transition: background-color 0.3s ease;
-        }
-
-        .track-btn:hover {
-            background-color: #5a9c30;
-        }
-
-        .link {
-            font-size: 0.85rem;
-            color: #2563eb;
-            text-decoration: none;
-            cursor: pointer;
-            width: 100%;
-            text-align: left;
-        }
-
-        .link:hover {
-            text-decoration: underline;
-        }
-
-        .cancel-btn {
-            color: red;
-            border: 1px solid red;
-            background: none;
-            padding: 6px 10px;
-            border-radius: 6px;
-            font-size: 0.9rem;
-            cursor: pointer;
-            width: 100%;
-            text-align: center;
-            transition: background-color 0.3s ease;
-        }
-
-        .cancel-btn:hover {
-            background-color: rgba(255, 0, 0, 0.1);
-        }
-
-        .order-header {
-            display: flex;
-            justify-content: space-between;
-            margin-bottom: 10px;
+        /* Styling for "Your Orders" text */
+        .orders-title {
+            font-family: 'Segoe UI', sans-serif;
+            font-size: 2rem;
             font-weight: 700;
-            font-size: 1.1rem;
-            color: #374151;
+            background: linear-gradient(90deg, rgb(0, 0, 0), #818cf8);
+            -webkit-background-clip: text;
+            background-clip: text;
+            color: transparent;
+            text-shadow: 0 3px 6px rgba(0, 0, 0, 0.4);
+            animation: slideIn 0.5s ease-out;
+            letter-spacing: 0.05em;
+            padding: 4px 8px;
+            background-color: rgba(30, 41, 59, 0.5);
+            border-radius: 8px;
         }
-
-        .order-total {
-            color: #16a34a;
-            /* green */
+        /* Styling for sidebar buttons */
+        .sidebar-btn {
+            background: linear-gradient(to right, #818cf8, #312e81);
+            color: #ffffff;
+            transition: opacity 0.2s ease;
         }
-
-        .item-info .arrival {
-            font-weight: 600;
-            font-size: 1rem;
-            margin: 0;
-            display: flex;
-            align-items: center;
-            gap: 6px;
+        .sidebar-btn:hover {
+            background: linear-gradient(to right, #a5b4fc, #4b468c);
+            opacity: 0.9;
         }
-
-        .invoice-btn {
+        .sidebar-btn:active {
+            background: #818cf8;
+            color: #ffffff;
+        }
+        @keyframes slideIn {
+            from { transform: translateY(10px); opacity: 0; }
+            to { transform: translateY(0); opacity: 1; }
+        }
+        /* Logo styling */
+        .logo-text {
+            font-family: 'Poppins', sans-serif;
+            font-weight: 700;
+            background: linear-gradient(to right, #fb923c, #f87171); /* orange-400 to red-400 */
+            -webkit-background-clip: text;
+            -webkit-text-fill-color: transparent;
+            text-shadow: 0 2px 4px rgba(0, 0, 0, 0.2);
+            position: relative;
             display: inline-block;
-            background-color: #2563eb;
-            color: white;
-            padding: 8px 14px;
-            border-radius: 6px;
-            font-weight: 600;
-            font-size: 0.9rem;
-            text-decoration: none;
-            text-align: center;
+            transition: transform 0.2s ease;
+        }
+        .logo-text:hover {
+            transform: scale(1.05);
+        }
+        .logo-text::after {
+            content: '';
+            position: absolute;
+            bottom: -4px;
+            left: 0;
             width: 100%;
-            cursor: pointer;
-            transition: background-color 0.3s ease;
-            margin-bottom: 8px;
+            height: 2px;
+            background: linear-gradient(to right, #fb923c, #f87171);
+            border-radius: 1px;
         }
-
-        .invoice-btn:hover {
-            background-color: #1e40af;
+        .logo-icon {
+            display: inline-block;
+            width: 2rem; /* w-8 */
+            height: 2rem; /* h-8 */
         }
-
-        /* Container holding all orders */
-        .order-list {
-            display: flex;
-            flex-direction: column;
-            align-items: center;
-            /* centers horizontally */
-            gap: 20px;
-            padding: 20px;
-            max-width: 800px;
-            /* max width for card container */
-            margin: 0 auto;
-            /* center the whole container horizontally */
+        @media (max-width: 640px) {
+            .logo-icon {
+                width: 1.5rem; /* w-6 */
+                height: 1.5rem; /* h-6 */
+            }
         }
     </style>
 </head>
 
-<body>
+<body class="min-h-screen bg-gradient-to-br from-blue-200 to-purple-400 text-white font-sans">
     <!-- Navbar -->
-    <nav>
-        <div class="nav-left">
-            <h1>Inventory</h1>
-        </div>
-        <div class="nav-right">
-            <input type="text" placeholder="Search products..." />
-            <div class="nav-icon">
-                <a href="profile.html"><i data-lucide="user"></i><span>Profile</span></a>
+    <nav class="bg-slate-900 flex items-center justify-between px-8 py-4 shadow-lg">
+        <a href="home.html" class="flex items-center gap-2 px-2 py-1 rounded-lg bg-slate-800/50 no-underline">
+            <svg class="logo-icon" data-lucide="apple">
+                <defs>
+                    <linearGradient id="apple-gradient" x1="0%" y1="0%" x2="100%" y2="100%">
+                        <stop offset="0%" style="stop-color:#fb923c" /> <!-- orange-400 -->
+                        <stop offset="100%" style="stop-color:#f87171" /> <!-- red-400 -->
+                    </linearGradient>
+                </defs>
+                <path fill="url(#apple-gradient)" d="M12 20.94c1.5 0 2.75-.4 3.69-1.06a6 6 0 0 0 2.28-2.75c-2.02-.14-3.88-1.3-4.81-3.28-.88-1.88-.56-4.06.88-5.62A5.94 5.94 0 0 0 9.25 6.5c-1.5.25-2.88 1-3.88 2.12-1.38 1.62-2 3.88-1.62 6.25.38 2.25 1.56 4.25 3.44 5.56.94.66 2.06.94 3.31.94Z"/>
+                <path fill="url(#apple-gradient)" d="M12 8.94c.5-1.75 1.56-3.38 3.19-4.44-.75 1.88-1.88 3.5-3.38 4.56-1.5 1.12-2.94 1.94-4.06 1.94.88 1.25 2.38 2.12 4.25 1.94Z"/>
+            </svg>
+            <span class="logo-text text-2xl sm:text-3xl">Fruitful</span>
+        </a>
+        <div class="flex items-center gap-4">
+            <div
+                class="rounded-full bg-gradient-to-r from-indigo-400 to-indigo-900 text-white px-4 py-2 flex items-center gap-2 cursor-pointer hover:opacity-90">
+                <a href="cart.html" class="flex items-center gap-2 text-white no-underline">
+                    <i data-lucide="shopping-cart"></i>
+                </a>
             </div>
-            <div class="nav-icon">
-                <a href="cart.html"><i data-lucide="shopping-cart"></i><span>Cart</span></a>
+            <div
+                class="rounded-full bg-gradient-to-r from-indigo-400 to-indigo-900 text-white px-4 py-2 flex items-center gap-2 cursor-pointer hover:opacity-90">
+                <a href="profile.html" class="flex items-center gap-2 text-white no-underline">
+                    <i data-lucide="user"></i>
+                </a>
+            </div>
+            <div
+                class="rounded-full bg-gradient-to-r from-indigo-400 to-indigo-900 text-white px-4 py-2 flex items-center gap-2 cursor-pointer hover:opacity-90">
+                <a href="#" onclick="logout()" class="flex items-center gap-2 text-white no-underline">
+                    <i data-lucide="power"></i>
+                    <span class="font-medium">Logout</span>
+                </a>
             </div>
         </div>
     </nav>
 
+    <!-- Pop-up for logout success -->
+    <div id="successPopup" class="fixed inset-0 flex items-center justify-center bg-black/50 hidden" style="z-index: 100;">
+        <div class="popup-container w-full max-w-sm rounded-2xl bg-slate-900 p-6 text-indigo-300 shadow-lg">
+            <h2 class="text-center text-xl font-semibold text-white mb-4">Logout Successful!</h2>
+            <p id="popupMessage" class="text-center text-sm mb-6"></p>
+            <button id="closePopup" class="w-full rounded-full bg-gradient-to-r from-indigo-400 to-indigo-900 py-2 font-medium tracking-wide text-white hover:opacity-90">Continue</button>
+        </div>
+    </div>
+
     <!-- Main Layout -->
-    <div class="container">
+    <div class="flex min-h-[calc(100vh-80px)]">
         <!-- Sidebar -->
-        <div class="sidebar">
-            <h2>Profile</h2>
-            <button id="ordersBtn" class="active">Order List</button>
-            <button id="updateBtn">Update Profile</button>
+        <div class="w-56 bg-slate-900 text-indigo-300 p-6 shadow-lg">
+            <h2 class="text-white text-xl font-semibold mb-6">Profile</h2>
+            <button id="ordersBtn" class="sidebar-btn w-full rounded-full py-2 mb-4 font-medium">My Orders</button>
+            <button id="updateBtn" class="sidebar-btn w-full rounded-full py-2 font-medium">Manage Account</button>
         </div>
 
         <!-- Content Area -->
-        <div class="main-content" id="mainContent">
+        <div class="flex-1 p-10" id="mainContent">
             <!-- Loaded by JS -->
         </div>
     </div>
 
-    <!-- Script -->
     <script>
         lucide.createIcons();
 
@@ -573,7 +183,7 @@
         const customerId = localStorage.getItem("customerId");
 
         if (!customerId) {
-            mainContent.innerHTML = "<p style='color:red;'>Please log in first.</p>";
+            mainContent.innerHTML = "<p class='text-red-300 font-medium'>Please log in first.</p>";
         } else {
             fetchOrders(); // Default tab
         }
@@ -589,347 +199,77 @@
         });
 
         function setActive(activeButton) {
-            document.querySelectorAll(".sidebar button").forEach(btn => btn.classList.remove("active"));
-            activeButton.classList.add("active");
+            document.querySelectorAll(".sidebar button").forEach(btn => btn.classList.remove("active:bg-indigo-400", "active:text-white"));
+            activeButton.classList.add("active:bg-indigo-400", "active:text-white");
         }
 
-        // async function fetchOrders() {
-        //     mainContent.innerHTML = "<h2>Loading Order List...</h2>";
-
-        //     try {
-        //         const res = await fetch(`http://localhost:3010/api/orders`);
-        //         const orders = await res.json();
-
-        //         if (!Array.isArray(orders) || orders.length === 0) {
-        //             mainContent.innerHTML = "<h3>No orders found.</h3>";
-        //             return;
-        //         }
-
-        //         let html = `<h2>Your Orders</h2><div class="order-list">`;
-
-        //         orders.forEach(order => {
-        //             html += `
-        //     <div class="order-card">
-        //       <h3>Order #${order.id}</h3>
-        //       <p><strong>Date:</strong> ${new Date(order.orderDate).toLocaleString()}</p>
-        //       <p><strong>Total:</strong> ₹${order.totalAmount}</p>
-        //       <h4>Items:</h4>
-        //       <ul>
-        //         ${order.orderItems.map(oi => `
-        //           <li>
-        //             ${oi.item.name} - ₹${oi.priceAtOrder} x ${oi.quantity} 
-        //             = ₹${oi.priceAtOrder * oi.quantity}
-        //           </li>
-        //         `).join("")}
-        //       </ul>
-        //     </div>
-        //   `;
-        //         });
-
-        //         html += `</div>`;
-        //         mainContent.innerHTML = html;
-
-        //     } catch (err) {
-        //         console.error("Failed to fetch orders:", err);
-        //         mainContent.innerHTML = "<p style='color:red;'>Could not load orders. Try again later.</p>";
-        //     }
-        // }
-
-        //         async function fetchOrders() {
-        //             mainContent.innerHTML = "<h2>Loading Order List...</h2>";
-
-        //             try {
-        //                 const res = await fetch(`http://localhost:3010/api/orders`);
-        //                 const orders = await res.json();
-
-        //                 if (!Array.isArray(orders) || orders.length === 0) {
-        //                     mainContent.innerHTML = "<h3>No orders found.</h3>";
-        //                     return;
-        //                 }
-
-        //                 let html = `<h2>Your Orders</h2><div class="order-list">`;
-
-        //                 orders.forEach(order => {
-        //                     html += `
-        //             <div class="order-card" data-order-id="${order.id}">
-        //                 <div style="
-        //     display: flex;
-        //     justify-content: space-between;
-        // ">
-        //               <h3>Order #${order.id}
-        //                 </h3><button class="cancel-btn" data-id="${order.id}">Cancel</button>
-        //                 </div>
-        //               <p><strong>Date:</strong> ${new Date(order.orderDate).toLocaleString()}</p>
-        //               <p><strong>Total:</strong> ₹${order.totalAmount}</p>
-        //               <h4>Items:</h4>
-        //               <ul>
-        //                 ${order.orderItems.map(oi => `
-        //                   <li>
-        //                     ${oi.item.name} - ₹${oi.priceAtOrder} x ${oi.quantity} 
-        //                     = ₹${oi.priceAtOrder * oi.quantity}
-        //                   </li>
-        //                 `).join("")}
-        //               </ul>
-
-        //             </div>
-        //           `;
-        //                 });
-
-        //                 html += `</div>`;
-        //                 mainContent.innerHTML = html;
-
-        //                 // Add event listeners to cancel buttons
-        //                 document.querySelectorAll(".cancel-btn").forEach(btn => {
-        //                     btn.addEventListener("click", async (e) => {
-        //                         const orderId = e.target.getAttribute("data-id");
-
-        //                         if (confirm(`Cancel Order #${orderId}?`)) {
-        //                             try {
-        //                                 const response = await fetch(`http://localhost:3010/api/orders/${orderId}`, {
-        //                                     method: "DELETE",
-        //                                 });
-
-        //                                 if (response.ok) {
-        //                                     alert(`Order #${orderId} canceled.`);
-        //                                     fetchOrders(); // Refresh order list
-        //                                 } else {
-        //                                     const errorData = await response.json();
-        //                                     alert(`Failed to cancel: ${errorData.message || 'Unknown error'}`);
-        //                                 }
-        //                             } catch (error) {
-        //                                 console.error("Cancel failed:", error);
-        //                                 alert("Network error. Try again.");
-        //                             }
-        //                         }
-        //                     });
-        //                 });
-
-        //             } catch (err) {
-        //                 console.error("Failed to fetch orders:", err);
-        //                 mainContent.innerHTML = "<p style='color:red;'>Could not load orders. Try again later.</p>";
-        //             }
-        //         }
-
-        //         async function fetchOrders() {
-        //             mainContent.innerHTML = "<h2>Loading Order List...</h2>";
-
-        //             try {
-        //                 const res = await fetch(`http://localhost:3010/api/orders`);
-        //                 const orders = await res.json();
-
-        //                 if (!Array.isArray(orders) || orders.length === 0) {
-        //                     mainContent.innerHTML = "<h3>No orders found.</h3>";
-        //                     return;
-        //                 }
-
-        //                 let html = `<h2 style="margin-bottom: 16px;">Your Orders</h2><div class="order-list">`;
-
-        //                 orders.forEach((order, index) => {
-        //                     // Just for demo purposes - rotate between statuses
-        //                     const statuses = ["Confirmed", "Dispatched", "Out for Delivery", "Delivered"];
-        //                     const currentStatus = statuses[index % statuses.length];
-        //                     let statusColor = {
-        //                         Confirmed: "#3b82f6",
-        //                         Dispatched: "#f97316",
-        //                         "Out for Delivery": "#facc15",
-        //                         Delivered: "#10b981"
-        //                     }[currentStatus] || "#6b7280";
-
-        //                     html += `
-        //             <div class="order-card" data-order-id="${order.id}">
-        //                 <div class="order-header">
-        //                     <h3>Order #${order.id}</h3>
-        //                     <button class="cancel-btn" data-id="${order.id}">Cancel</button>
-        //                 </div>
-        //                 <div class="order-status" style="background-color: ${statusColor}20; color: ${statusColor};">
-        //                     ${currentStatus}
-        //                 </div>
-        //                 <p><strong>Date:</strong> ${new Date(order.orderDate).toLocaleString()}</p>
-        //                 <p><strong>Total:</strong> ₹${order.totalAmount}</p>
-        //                 <h4>🛒 Items:</h4>
-        // <div class="item-table">
-        //   <div class="item-row item-header">
-        //     <span>Item</span>
-        //     <span>Qty</span>
-        //     <span>Price</span>
-        //     <span>Total</span>
-        //   </div>
-        //   ${order.orderItems.map(oi => `
-        //     <div class="item-row">
-        //       <span>${oi.item.name}</span>
-        //       <span>${oi.quantity}</span>
-        //       <span>₹${oi.priceAtOrder}</span>
-        //       <span>₹${oi.priceAtOrder * oi.quantity}</span>
-        //     </div>
-        //   `).join("")}
-        // </div>
-
-        //             </div>
-        //             `;
-        //                 });
-
-        //                 html += `</div>`;
-        //                 mainContent.innerHTML = html;
-
-        //                 // Add event listeners
-        //                 document.querySelectorAll(".cancel-btn").forEach(btn => {
-        //                     btn.addEventListener("click", async (e) => {
-        //                         const orderId = e.target.getAttribute("data-id");
-
-        //                         if (confirm(`Cancel Order #${orderId}?`)) {
-        //                             try {
-        //                                 const response = await fetch(`http://localhost:3010/api/orders/${orderId}`, {
-        //                                     method: "DELETE",
-        //                                 });
-
-        //                                 if (response.ok) {
-        //                                     alert(`Order #${orderId} canceled.`);
-        //                                     fetchOrders(); // Refresh
-        //                                 } else {
-        //                                     const errorData = await response.json();
-        //                                     alert(`Failed to cancel: ${errorData.message || 'Unknown error'}`);
-        //                                 }
-        //                             } catch (error) {
-        //                                 console.error("Cancel failed:", error);
-        //                                 alert("Network error. Try again.");
-        //                             }
-        //                         }
-        //                     });
-        //                 });
-
-        //             } catch (err) {
-        //                 console.error("Failed to fetch orders:", err);
-        //                 mainContent.innerHTML = "<p style='color:red;'>Could not load orders. Try again later.</p>";
-        //             }
-        //         }
-
-        // async function fetchOrders() {
-        //     mainContent.innerHTML = "<h2>Loading Order List...</h2>";
-
-        //     try {
-        //         const res = await fetch(`http://localhost:3010/api/orders`);
-        //         const orders = await res.json();
-
-        //         if (!Array.isArray(orders) || orders.length === 0) {
-        //             mainContent.innerHTML = "<h3>No orders found.</h3>";
-        //             return;
-        //         }
-
-        //         let html = `<h2>Your Orders</h2>`;
-
-        //         orders.forEach(order => {
-        //             // Hardcoded status for demonstration — you can replace with actual order.status
-        //             const status = "Dispatched";
-
-        //             html += `
-        //     <div class="order-wrapper" data-order-id="${order.id}">
-        //       <div class="order-status">${status}</div>
-        //       <div class="order-container">
-        //         <div class="order-left">
-        //           ${order.orderItems.map(item => `
-        //             <div class="item-box">
-        //               <img src="${item.item.imageUrl || "https://via.placeholder.com/50"}" alt="${item.item.name}" />
-        //               <div class="item-info">
-        //                 <p class="arrival">Expected on ${new Date(order.orderDate).toLocaleDateString()}</p>
-        //                 <p class="time-slot">7am - 7pm</p>
-        //               </div>
-        //             </div>
-        //           `).join("")}
-        //         </div>
-        //         <div class="order-right">
-        //           <button class="track-btn">Track order</button>
-        //           <a href="#" class="link">View order details</a>
-        //           <a href="#" class="link">Get invoice</a>
-        //           <a href="#" class="link">Edit order</a>
-        //           <button class="cancel-btn" data-id="${order.id}">Cancel</button>
-        //         </div>
-        //       </div>
-        //     </div>
-        //     `;
-        //         });
-
-        //         mainContent.innerHTML = html;
-
-        //         // Add event listeners for cancel buttons
-        //         document.querySelectorAll(".cancel-btn").forEach(btn => {
-        //             btn.addEventListener("click", async (e) => {
-        //                 const orderId = e.target.getAttribute("data-id");
-
-        //                 if (confirm(`Cancel Order #${orderId}?`)) {
-        //                     try {
-        //                         const response = await fetch(`http://localhost:3010/api/orders/${orderId}`, {
-        //                             method: "DELETE",
-        //                         });
-
-        //                         if (response.ok) {
-        //                             alert(`Order #${orderId} canceled.`);
-        //                             fetchOrders(); // Refresh order list
-        //                         } else {
-        //                             const errorData = await response.json();
-        //                             alert(`Failed to cancel: ${errorData.message || 'Unknown error'}`);
-        //                         }
-        //                     } catch (error) {
-        //                         console.error("Cancel failed:", error);
-        //                         alert("Network error. Try again.");
-        //                     }
-        //                 }
-        //             });
-        //         });
-
-        //     } catch (err) {
-        //         console.error("Failed to fetch orders:", err);
-        //         mainContent.innerHTML = "<p style='color:red;'>Could not load orders. Try again later.</p>";
-        //     }
-        // }
-
         async function fetchOrders() {
-            mainContent.innerHTML = "<h2>Loading Order List...</h2>";
+            mainContent.innerHTML = "<h2 class='orders-title mb-6'>Loading Order List...</h2>";
 
             try {
-                const res = await fetch(`http://localhost:3010/api/orders`);
+                const res = await fetch(`http://localhost:3010/api/orders/customers/${customerId}`);
                 const orders = await res.json();
 
                 if (!Array.isArray(orders) || orders.length === 0) {
-                    mainContent.innerHTML = "<h3>No orders found.</h3>";
+                    mainContent.innerHTML = "<h3 class='text-white text-xl font-semibold'>No orders found.</h3>";
                     return;
                 }
 
-                let html = `<h2>Your Orders</h2><div class="order-list">`;
-
+                let html = `
+                    <h2 class='orders-title mb-6'>Your Orders</h2>
+                    <div class='max-w-3xl mx-auto'>
+                        <ul class='space-y-4'>
+                `;
 
                 orders.forEach(order => {
-                    const status = "Dispatched";  // Hardcoded for now
+                    const status = "Dispatched"; // Hardcoded for now
+                    const itemNames = order.orderItems.map(item => `${item.item.name}${item.quantity > 1 ? ` ×${item.quantity}` : ''}`).join(", ");
+                    const deliveryDate = new Date(order.orderDate).toLocaleDateString();
 
                     html += `
-            <div class="order-wrapper" data-order-id="${order.id}">
-              <div class="order-header">
-                <div class="order-status">${status}</div>
-                <div class="order-total">Total: ₹${order.totalAmount}</div>
-              </div>
-              <div class="order-container">
-                <div class="order-left">
-                  ${order.orderItems.map(item => `
-                    <div class="item-box">
-                      <img src="${item.item.imageUrl || "https://via.placeholder.com/50"}" alt="${item.item.name}" />
-                      <div class="item-info">
-                        <p class="arrival">${item.item.name} ${item.quantity > 1 ? `&times;${item.quantity}` : ''}</p>
-                        <p class="time-slot">Expected on ${new Date(order.orderDate).toLocaleDateString()}</p>
-                      </div>
-                    </div>
-                  `).join("")}
-                </div>
-                <div class="order-right">
-                  <button class="track-btn">Track order</button>
-                  <a href="#" class="invoice-btn">Get invoice</a>
-                  <button class="cancel-btn" data-id="${order.id}">Cancel</button>
-                </div>
-              </div>
-            </div>
-            `;
+                        <li class='bg-slate-900 text-indigo-300 p-4 rounded-2xl shadow-lg hover:shadow-xl transition duration-200' data-order-id='${order.id}'>
+                            <div class='flex justify-between items-center flex-wrap gap-2'>
+                                <div class='flex items-center gap-2'>
+                                    <p class='text-white font-semibold text-sm'>Order #${order.id}</p>
+                                    <div class='inline-block bg-indigo-100 text-indigo-700 text-xs font-medium px-3 py-1 rounded-full'>${status}</div>
+                                </div>
+                                <div class='text-right'>
+                                    <p class='text-white font-semibold text-sm'>₹${order.totalAmount}</p>
+                                    <button class='toggle-details text-indigo-300 text-xs font-medium hover:text-indigo-100 transition duration-200' data-id='${order.id}'>Details</button>
+                                </div>
+                            </div>
+                            <div class='order-details hidden mt-4'>
+                                <div class='border-t border-indigo-800 pt-4'>
+                                    <p class='text-indigo-300 text-xs mb-2'>Items: ${itemNames}</p>
+                                    <p class='text-indigo-300 text-xs mb-4'>Expected Delivery: ${deliveryDate}</p>
+                                    <div class='flex flex-col gap-2'>
+                                        <button class='w-full rounded-full bg-gradient-to-r from-indigo-400 to-indigo-900 py-2 font-medium tracking-wide text-white hover:opacity-90 track-btn'>Track order</button>
+                                        <a href='#' class='w-full rounded-full bg-gradient-to-r from-indigo-400 to-indigo-900 py-2 font-medium tracking-wide text-white text-center no-underline hover:opacity-90 invoice-btn'>Get invoice</a>
+                                        <button class='w-full rounded-full bg-red-100 text-red-700 py-2 font-medium hover:bg-red-200 cancel-btn' data-id='${order.id}'>Cancel</button>
+                                    </div>
+                                </div>
+                            </div>
+                        </li>
+                    `;
                 });
 
+                html += `
+                        </ul>
+                    </div>
+                `;
                 mainContent.innerHTML = html;
 
+                // Toggle details
+                document.querySelectorAll(".toggle-details").forEach(btn => {
+                    btn.addEventListener("click", (e) => {
+                        const orderId = e.target.getAttribute("data-id");
+                        const details = document.querySelector(`[data-order-id='${orderId}'] .order-details`);
+                        details.classList.toggle("hidden");
+                        e.target.textContent = details.classList.contains("hidden") ? "Details" : "Hide";
+                    });
+                });
+
+                // Cancel button logic
                 document.querySelectorAll(".cancel-btn").forEach(btn => {
                     btn.addEventListener("click", async (e) => {
                         const orderId = e.target.getAttribute("data-id");
@@ -957,38 +297,30 @@
 
             } catch (err) {
                 console.error("Failed to fetch orders:", err);
-                mainContent.innerHTML = "<p style='color:red;'>Could not load orders. Try again later.</p>";
+                mainContent.innerHTML = "<p class='text-red-300 font-medium'>Could not load orders. Try again later.</p>";
             }
         }
 
-
-
         function showUpdateForm() {
             mainContent.innerHTML = `
-  <div class="form-wrapper">
-    <div>
-      <h2 style="text-align:center; margin-bottom: 20px;">Update Profile</h2>
-      <div id="updateStatus" style="margin: 10px 0; font-weight: 500; text-align: center;"></div>
-      <form id="updateForm">
-        <label for="name">Name:</label><br />
-        <input id="name" name="name" type="text" class="input" required /><br /><br />
-        
-        <label for="email">Email:</label><br />
-        <input id="email" name="email" type="email" class="input" required /><br /><br />
-        
-        <label for="phone">Phone:</label><br />
-        <input id="phone" name="phone" type="text" class="input" required /><br /><br />
-        
-        <label for="address">Address:</label><br />
-        <textarea id="address" name="address" rows="4" class="input" required></textarea><br /><br />
-        
-        <button type="submit" class="submit-btn">Save Changes</button>
-      </form>
-    </div>
-  </div>
-`;
-
-
+                <div class='flex justify-center'>
+                    <div class='bg-slate-900 text-indigo-300 w-full max-w-md p-8 rounded-2xl shadow-lg'>
+                        <h2 class='text-white text-xl font-semibold mb-6 text-center'>Update Profile</h2>
+                        <div id='updateStatus' class='mb-4 font-medium text-center'></div>
+                        <form id='updateForm'>
+                            <label for='name' class='text-sm text-indigo-300'>Name:</label><br />
+                            <input id='name' name='name' type='text' class='w-full rounded-full px-4 py-2 text-sm text-white bg-[#333A5c] border-none outline-none mb-4' required /><br />
+                            <label for='email' class='text-sm text-indigo-300'>Email:</label><br />
+                            <input id='email' name='email' type='email' class='w-full rounded-full px-4 py-2 text-sm text-white bg-[#333A5c] border-none outline-none mb-4' required /><br />
+                            <label for='phone' class='text-sm text-indigo-300'>Phone:</label><br />
+                            <input id='phone' name='phone' type='text' class='w-full rounded-full px-4 py-2 text-sm text-white bg-[#333A5c] border-none outline-none mb-4' required /><br />
+                            <label for='address' class='text-sm text-indigo-300'>Address:</label><br />
+                            <textarea id='address' name='address' rows='4' class='w-full rounded-lg px-4 py-2 text-sm text-white bg-[#333A5c] border-none outline-none mb-4' required></textarea><br />
+                            <button type='submit' class='w-full rounded-full bg-gradient-to-r from-indigo-400 to-indigo-900 py-2 font-medium tracking-wide text-white hover:opacity-90'>Save Changes</button>
+                        </form>
+                    </div>
+                </div>
+            `;
 
             // Load current customer data
             fetch(`http://localhost:3010/api/customers/${customerId}`)
@@ -1008,7 +340,7 @@
             document.getElementById("updateForm").addEventListener("submit", async (e) => {
                 e.preventDefault();
                 const status = document.getElementById("updateStatus");
-                status.style.color = "#333";
+                status.style.color = "#fff";
                 status.innerText = "Updating...";
 
                 const updatedCustomer = {
@@ -1028,7 +360,7 @@
 
                     if (res.ok) {
                         status.innerText = "Profile updated successfully!";
-                        status.style.color = "green";
+                        status.style.color = "#22c55e";
                     } else {
                         const errText = await res.text();
                         throw new Error(errText);
@@ -1036,11 +368,28 @@
                 } catch (err) {
                     console.error(err);
                     status.innerText = "Failed to update profile.";
-                    status.style.color = "red";
+                    status.style.color = "#f87171";
                 }
             });
         }
 
+        function logout() {
+            function showPopup(message, redirectUrl) {
+                const popup = document.getElementById("successPopup");
+                const popupMessage = document.getElementById("popupMessage");
+                const closeButton = document.getElementById("closePopup");
+
+                popupMessage.textContent = message;
+                popup.classList.remove("hidden");
+
+                closeButton.onclick = () => {
+                    popup.classList.add("hidden");
+                    window.location.href = redirectUrl;
+                };
+            }
+
+            showPopup("Logged out successfully!", "index.html");
+        }
     </script>
 </body>
 

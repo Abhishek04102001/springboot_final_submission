@@ -112,5 +112,12 @@ public class OrderController {
 			return new ResponseEntity<>(response, HttpStatus.BAD_REQUEST);
 		}
 	}
+	
+	@GetMapping("/customers/{id}")
+	public ResponseEntity<List<OrderDTO>> getOrderByCustomerId(@PathVariable Long id) {
+		List<OrderDTO> orderDtoList = orderService.findOrderByCustomerId(id);
+
+		return new ResponseEntity<>(orderDtoList, HttpStatus.OK);
+	}
 
 }

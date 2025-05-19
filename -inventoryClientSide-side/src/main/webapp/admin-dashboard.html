@@ -5,145 +5,207 @@
 	<meta charset="UTF-8" />
 	<meta name="viewport" content="width=device-width, initial-scale=1.0" />
 	<title>Admin Dashboard</title>
-
-	<!-- Google Fonts -->
-	<link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;600&display=swap" rel="stylesheet">
-
-	<!-- Lucide Icons CDN -->
+	<script src="https://unpkg.com/@tailwindcss/browser@4"></script>
 	<script src="https://unpkg.com/lucide@latest"></script>
-
+	<link href="https://fonts.googleapis.com/css2?family=Poppins:wght@400;600;700&display=swap" rel="stylesheet">
 	<style>
-		* {
-			margin: 0;
-			padding: 0;
-			box-sizing: border-box;
-		}
-
-		body {
-			font-family: 'Inter', sans-serif;
-			background-color: #f4f6fa;
-			color: #333;
-		}
-
-		nav {
-			background-color: #4e54c8;
-			color: white;
-			padding: 15px 30px;
-			display: flex;
-			justify-content: space-between;
-			align-items: center;
-			box-shadow: 0 2px 8px rgba(0, 0, 0, 0.1);
-		}
-
-		.nav-left h1 {
-			font-size: 24px;
-			font-weight: 600;
-		}
-
-		.nav-links {
+		/* Styling for navbar buttons */
+		.nav-btn {
+			background: linear-gradient(to right, #818cf8, #312e81);
+			color: #ffffff;
+			padding: 0.5rem; /* Equal padding for icon-only state */
+			border-radius: 9999px; /* rounded-full */
 			display: flex;
 			align-items: center;
-			gap: 20px;
-		}
-
-		.nav-link {
-			display: flex;
-			align-items: center;
-			gap: 6px;
-			background: white;
-			color: #4e54c8;
-			padding: 8px 14px;
-			border-radius: 8px;
+			justify-content: center; /* Center icon in non-hover state */
+			gap: 0; /* No gap when text is hidden */
 			cursor: pointer;
-			font-weight: 500;
 			text-decoration: none;
-			transition: background 0.2s;
+			min-width: 2.5rem; /* Ensure circular shape */
+			min-height: 2.5rem;
+			transition: opacity 0.2s ease, padding 0.2s ease, gap 0.2s ease, justify-content 0.2s ease;
 		}
-
-		.nav-link:hover {
-			background: #e1e4f0;
+		.nav-btn:hover {
+			background: linear-gradient(to right, #a5b4fc, #4b468c);
+			opacity: 0.9;
+			padding: 0.5rem 1rem; /* Expand padding for text */
+			gap: 0.5rem; /* Restore gap for icon-text spacing */
+			justify-content: flex-start; /* Align icon and text on hover */
 		}
-
-		.main-content {
-			padding: 40px 30px;
+		.nav-btn:active {
+			background: #818cf8;
+			color: #ffffff;
+		}
+		.nav-btn i {
+			width: 1.5rem;
+			height: 1.5rem;
+			display: block; /* Ensure icon is always visible */
+		}
+		.nav-btn span {
+			opacity: 0;
+			width: 0;
+			white-space: nowrap; /* Prevent text wrapping */
+			overflow: hidden; /* Hide text when width is 0 */
+			font-weight: 500; /* font-medium */
+			transition: opacity 0.2s ease, width 0.2s ease;
+		}
+		.nav-btn:hover span {
+			opacity: 1;
+			width: auto; /* Expand to fit text */
+		}
+		/* Slideshow styling */
+		.slideshow-container {
+			position: relative;
+			width: 100%;
+			height: 30rem; /* h-96 */
+			overflow: hidden;
+		}
+		.slide {
+			position: absolute;
+			width: 100%;
+			height: 100%;
+			opacity: 0;
+			transition: opacity 0.5s ease;
+		}
+		.slide.active {
+			opacity: 1;
+		}
+		.slide img {
+			width: 100%;
+			height: 100%;
+			object-fit: cover;
+		}
+		.dots-container {
 			display: flex;
 			justify-content: center;
-			flex-wrap: wrap;
-			gap: 30px;
+			gap: 0.5rem;
+			margin-top: 1rem;
 		}
-
-		.card {
-			background-color: white;
-			width: 280px;
-			padding: 20px;
-			border-radius: 16px;
-			box-shadow: 0 4px 12px rgba(0, 0, 0, 0.08);
-			transition: transform 0.2s;
-		}
-
-		.card:hover {
-			transform: translateY(-4px);
-		}
-
-		.card h3 {
-			margin-bottom: 10px;
-			font-size: 20px;
-		}
-
-		.card p {
-			color: #666;
-			margin-bottom: 12px;
-		}
-
-		.card button {
-			background-color: #4e54c8;
-			color: white;
-			padding: 10px 16px;
-			border: none;
-			border-radius: 8px;
+		.dot {
+			width: 0.75rem;
+			height: 0.75rem;
+			background-color: #d1d5db; /* gray-400 */
+			border-radius: 50%;
 			cursor: pointer;
-			transition: background-color 0.2s;
+			transition: background-color 0.3s ease;
 		}
-
-		.card button:hover {
-			background-color: #3e42a1;
+		.dot.active {
+			background-color: #818cf8; /* indigo-400 */
+		}
+		/* Logo styling */
+		.logo-text {
+			font-family: 'Poppins', sans-serif;
+			font-weight: 700;
+			background: linear-gradient(to right, #fb923c, #f87171); /* orange-400 to red-400 */
+			-webkit-background-clip: text;
+			-webkit-text-fill-color: transparent;
+			text-shadow: 0 2px 4px rgba(0, 0, 0, 0.2);
+			position: relative;
+			display: inline-block;
+			transition: transform 0.2s ease;
+		}
+		.logo-text:hover {
+			transform: scale(1.05);
+		}
+		.logo-text::after {
+			content: '';
+			position: absolute;
+			bottom: -4px;
+			left: 0;
+			width: 100%;
+			height: 2px;
+			background: linear-gradient(to right, #fb923c, #f87171);
+			border-radius: 1px;
+		}
+		.logo-icon {
+			display: inline-block;
+			width: 2rem; /* w-8 */
+			height: 2rem; /* h-8 */
+		}
+		@media (max-width: 640px) {
+			.logo-icon {
+				width: 1.5rem; /* w-6 */
+				height: 1.5rem; /* h-6 */
+			}
+			.nav-btn {
+				padding: 0.375rem; /* Smaller padding for mobile */
+				min-width: 2rem; /* Smaller circular shape */
+				min-height: 2rem;
+			}
+			.nav-btn:hover {
+				padding: 0.375rem 0.75rem; /* Slightly less padding on hover */
+			}
+			.nav-btn i {
+				width: 1.25rem;
+				height: 1.25rem; /* Smaller icons on mobile */
+			}
 		}
 	</style>
 </head>
 
-<body>
-
+<body class="min-h-screen bg-gradient-to-br from-blue-200 to-purple-400 text-white font-sans">
 	<!-- Navigation Bar -->
-	<nav>
-		<div class="nav-left">
-			<h1>Admin Panel</h1>
+	<nav class="bg-slate-900 flex items-center justify-between px-8 py-4 shadow-lg">
+		<div class="flex items-center gap-2 px-2 py-1 rounded-lg bg-slate-800/50">
+			<svg class="logo-icon" data-lucide="apple">
+				<defs>
+					<linearGradient id="apple-gradient" x1="0%" y1="0%" x2="100%" y2="100%">
+						<stop offset="0%" style="stop-color:#fb923c" /> <!-- orange-400 -->
+						<stop offset="100%" style="stop-color:#f87171" /> <!-- red-400 -->
+					</linearGradient>
+				</defs>
+				<path fill="url(#apple-gradient)" d="M12 20.94c1.5 0 2.75-.4 3.69-1.06a6 6 0 0 0 2.28-2.75c-2.02-.14-3.88-1.3-4.81-3.28-.88-1.88-.56-4.06.88-5.62A5.94 5.94 0 0 0 9.25 6.5c-1.5.25-2.88 1-3.88 2.12-1.38 1.62-2 3.88-1.62 6.25.38 2.25 1.56 4.25 3.44 5.56.94.66 2.06.94 3.31.94Z"/>
+				<path fill="url(#apple-gradient)" d="M12 8.94c.5-1.75 1.56-3.38 3.19-4.44-.75 1.88-1.88 3.5-3.38 4.56-1.5 1.12-2.94 1.94-4.06 1.94.88 1.25 2.38 2.12 4.25 1.94Z"/>
+			</svg>
+			<span class="logo-text text-2xl sm:text-3xl">Fruitful</span>
 		</div>
-		<div class="nav-links">
-			<a href="make-purchase.html" class="nav-link">
-				<i data-lucide="shopping-bag"></i><span>Make Purchase</span>
+		<div class="flex items-center gap-4">
+			<a href="make-purchase.html"
+				class="nav-btn flex items-center cursor-pointer no-underline">
+				<i data-lucide="credit-card"></i>
+				<span>Purchase Products</span>
 			</a>
-			<a href="invoices.html" class="nav-link">
-				<i data-lucide="file-text"></i><span>Invoices</span>
+			<a href="invoices.html"
+				class="nav-btn flex items-center cursor-pointer no-underline">
+				<i data-lucide="receipt"></i>
+				<span>Invoices</span>
 			</a>
-			<a href="admin-products.html" class="nav-link">
-				<i data-lucide="package"></i><span>Product</span>
+			<a href="admin-products.html"
+				class="nav-btn flex items-center cursor-pointer no-underline">
+				<i data-lucide="box"></i>
+				<span>Manage Products</span>
 			</a>
-			<a href="vendors.html" class="nav-link">
-				<i data-lucide="store"></i><span>Vendor</span>
+			<a href="vendors.html"
+				class="nav-btn flex items-center cursor-pointer no-underline">
+				<i data-lucide="users"></i>
+				<span>Manage Vendors</span>
 			</a>
-			<a href="#" class="nav-link" onclick="logout()">
-				<i data-lucide="log-out"></i><span>Logout</span>
+			<a href="#" onclick="logout()"
+				class="nav-btn flex items-center cursor-pointer no-underline">
+				<i data-lucide="power"></i>
+				<span>Logout</span>
 			</a>
 		</div>
 	</nav>
 
 	<!-- Main Content -->
-	<div class="main-content">
-		<!-- Optional default welcome content or summary boxes -->
-		<div class="card">
-			<h3>Welcome, Admin</h3>
-			<p>Manage purchases, products, and vendors from here.</p>
-			<button onclick="location.href='make-purchase.html'">Start Purchasing</button>
+	<div class="p-10">
+		<div class="max-w-5xl w-full mx-auto mt-6 rounded-2xl overflow-hidden shadow-lg">
+			<div class="slideshow-container">
+				<div class="slide">
+					<img src="https://images.unsplash.com/photo-1567306226416-28f0efdc88ce?q=80&w=2070&auto=format&fit=crop&ixlib=rb-4.1.0&ixid=M3wxMjA3fDB8MHxwaG90by1wYWdlfHx8fGVufDB8fHx8fA%3D%3D" alt="Apples">
+				</div>
+				<div class="slide">
+					<img src="https://images.unsplash.com/photo-1592187270271-9a4b84faa228?q=80&w=1974&auto=format&fit=crop&ixlib=rb-4.1.0&ixid=M3wxMjA3fDB8MHxwaG90by1wYWdlfHx8fGVufDB8fHx8fA%3D%3D" alt="Oranges">
+				</div>
+				<div class="slide">
+					<img src="https://images.unsplash.com/photo-1604148482093-d55d6fc62400?q=80&w=1974&auto=format&fit=crop&ixlib=rb-4.1.0&ixid=M3wxMjA3fDB8MHxwaG90by1wYWdlfHx8fGVufDB8fHx8fA%3D%3D" alt="Bananas">
+				</div>
+				<div class="slide">
+					<img src="https://images.unsplash.com/photo-1543528176-61b239494933?q=80&w=2074&auto=format&fit=crop&ixlib=rb-4.1.0&ixid=M3wxMjA3fDB8MHxwaG90by1wYWdlfHx8fGVufDB8fHx8fA%3D%3D" alt="Strawberries">
+				</div>
+			</div>
+
 		</div>
 	</div>
 
@@ -151,16 +213,50 @@
 		if (localStorage.getItem("isAdmin") !== "true") {
 			window.location.href = "index.html";
 		}
+
 		function logout() {
 			localStorage.removeItem("isAdmin");
 			alert("Logged out successfully.");
-			window.location.href = "index.html"; // redirect to login page
+			window.location.href = "index.html";
 		}
 
 		lucide.createIcons();
+
+		// Slideshow functionality
+		const slides = document.querySelectorAll('.slide');
+		const dots = document.querySelectorAll('.dot');
+		let currentSlide = 0;
+
+		function showSlide(index) {
+			slides.forEach((slide, i) => {
+				slide.classList.toggle('active', i === index);
+			});
+			dots.forEach((dot, i) => {
+				dot.classList.toggle('active', i === index);
+			});
+		}
+
+		function nextSlide() {
+			currentSlide = (currentSlide + 1) % slides.length;
+			showSlide(currentSlide);
+		}
+
+		// Auto-rotate every 3 seconds
+		let slideInterval = setInterval(nextSlide, 3000);
+
+		// Dot navigation
+		dots.forEach((dot, index) => {
+			dot.addEventListener('click', () => {
+				clearInterval(slideInterval);
+				currentSlide = index;
+				showSlide(currentSlide);
+				slideInterval = setInterval(nextSlide, 3000);
+			});
+		});
+
+		// Initialize first slide
+		showSlide(currentSlide);
 	</script>
-
-
 </body>
 
 </html>

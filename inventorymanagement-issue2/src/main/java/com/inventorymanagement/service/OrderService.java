@@ -153,54 +153,12 @@ public class OrderService {
                 return orderRepository.save(order);
             });
     }
-//    public OrderDTO proceedToCheckout(Long customerId) {
-//        // Fetch the customer
-//        Customer customer = customerRepository.findById(customerId)
-//                .orElseThrow(() -> new IllegalArgumentException("Customer not found"));
-//
-//        // Fetch the cart
-//        Cart cart = cartRepository.findByCustomerId(customerId)
-//                .orElseThrow(() -> new IllegalArgumentException("Cart not found"));
-//
-//        if (cart.getItems().isEmpty()) {
-//            throw new IllegalArgumentException("Your cart is empty.");
-//        }
-//
-//        // Calculate the total amount for the order
-//        double totalAmount = 0.0;
-//        for (CartItem cartItem : cart.getItems()) {
-//            Item item = cartItem.getItem();
-//            // Check stock availability
-//            if (cartItem.getQuantity() > item.getQuantity()) {
-//                throw new IllegalArgumentException("Not enough stock for item: " + item.getName());
-//            }
-//            totalAmount += item.getPrice() * cartItem.getQuantity();
-//        }
-//
-//        // Create the order
-//        Order order = new Order();
-//        order.setOrderDate(LocalDateTime.now());
-//        order.setTotalAmount(totalAmount);
-//        order.setCustomer(customer);
-//
-//        // Add items to the order
-//        for (CartItem cartItem : cart.getItems()) {
-//            Item item = cartItem.getItem();
-//            OrderItem orderItem = new OrderItem(cartItem.getQuantity(), item.getPrice(), order, item);
-//            order.addOrderItem(orderItem);
-//        }
-//
-//        // Save the order
-//        Order savedOrder = orderRepository.save(order);
-//
-//        // Clear the cart after the order is placed
-//        cart.getItems().clear();
-//        cartRepository.save(cart);
-//
-//        // Return the order details
-//        return modelMapper.map(savedOrder, OrderDTO.class);
-//    }
-
+    
+    public List<OrderDTO> findOrderByCustomerId(Long id) {
+        return orderRepository.findOrderByCustomerId(id).stream()
+                .map(order -> modelMapper.map(order, OrderDTO.class)).collect(Collectors.toList());
+    }
+    
     public OrderDTO proceedToCheckout(Long customerId) {
         // Fetch the customer
         Customer customer = customerRepository.findById(customerId)
@@ -259,5 +217,7 @@ public class OrderService {
         // Return the order details
         return modelMapper.map(savedOrder, OrderDTO.class);
     }
+    
+    
 
 }

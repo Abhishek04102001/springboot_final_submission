@@ -5,198 +5,166 @@
     <meta charset="UTF-8" />
     <meta name="viewport" content="width=device-width, initial-scale=1.0" />
     <title>Make Purchase</title>
-    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;600&display=swap" rel="stylesheet">
+    <script src="https://unpkg.com/@tailwindcss/browser@4"></script>
     <script src="https://unpkg.com/lucide@latest"></script>
-
+    <link href="https://fonts.googleapis.com/css2?family=Poppins:wght@400;600;700&display=swap" rel="stylesheet">
     <style>
-        /* Updated CSS block */
-        * {
-            margin: 0;
-            padding: 0;
-            box-sizing: border-box;
-        }
-
-        body {
-            font-family: 'Inter', sans-serif;
-            background-color: #f4f6fa;
-            color: #333;
-        }
-
-        nav {
-            background-color: #4e54c8;
-            color: white;
-            padding: 15px 30px;
-            display: flex;
-            justify-content: space-between;
-            align-items: center;
-            box-shadow: 0 2px 8px rgba(0, 0, 0, 0.1);
-        }
-
-        .nav-left h1 {
-            font-size: 24px;
-            font-weight: 600;
-        }
-
-        .nav-links {
+        /* Styling for navbar buttons */
+        .nav-btn {
+            background: linear-gradient(to right, #818cf8, #312e81);
+            color: #ffffff;
+            padding: 0.5rem; /* Equal padding for icon-only state */
+            border-radius: 9999px; /* rounded-full */
             display: flex;
             align-items: center;
-            gap: 20px;
-        }
-
-        .nav-link {
-            display: flex;
-            align-items: center;
-            gap: 6px;
-            background: white;
-            color: #4e54c8;
-            padding: 8px 14px;
-            border-radius: 8px;
+            justify-content: center; /* Center icon in non-hover state */
+            gap: 0; /* No gap when text is hidden */
             cursor: pointer;
-            font-weight: 500;
             text-decoration: none;
-            transition: background 0.2s;
+            min-width: 2.5rem; /* Ensure circular shape */
+            min-height: 2.5rem;
+            transition: opacity 0.2s ease, padding 0.2s ease, gap 0.2s ease, justify-content 0.2s ease;
         }
-
-        .nav-link:hover {
-            background: #e1e4f0;
+        .nav-btn:hover {
+            background: linear-gradient(to right, #a5b4fc, #4b468c);
+            opacity: 0.9;
+            padding: 0.5rem 1rem; /* Expand padding for text */
+            gap: 0.5rem; /* Restore gap for icon-text spacing */
+            justify-content: flex-start; /* Align icon and text on hover */
         }
-
-        .container {
-            max-width: 950px;
-            margin: 40px auto;
-            background: white;
-            padding: 35px;
-            border-radius: 20px;
-            box-shadow: 0 4px 16px rgba(0, 0, 0, 0.08);
+        .nav-btn:active {
+            background: #818cf8;
+            color: #ffffff;
         }
-
-        h2 {
-            color: #4e54c8;
-            margin-bottom: 20px;
+        .nav-btn i {
+            width: 1.5rem;
+            height: 1.5rem;
+            display: block; /* Ensure icon is always visible */
         }
-
-        select,
-        input,
-        textarea {
-            width: 100%;
-            padding: 10px;
-            margin-top: 6px;
-            border: 1px solid #ccc;
-            border-radius: 8px;
-            font-size: 15px;
+        .nav-btn span {
+            opacity: 0;
+            width: 0;
+            white-space: nowrap; /* Prevent text wrapping */
+            overflow: hidden; /* Hide text when width is 0 */
+            font-weight: 500; /* font-medium */
+            transition: opacity 0.2s ease, width 0.2s ease;
         }
-
-        .section {
-            margin-bottom: 30px;
+        .nav-btn:hover span {
+            opacity: 1;
+            width: auto; /* Expand to fit text */
         }
-
-        .item-form {
+        /* Logo styling */
+        .logo-text {
+            font-family: 'Poppins', sans-serif;
+            font-weight: 700;
+            background: linear-gradient(to right, #fb923c, #f87171); /* orange-400 to red-400 */
+            -webkit-background-clip: text;
+            -webkit-text-fill-color: transparent;
+            text-shadow: 0 2px 4px rgba(0, 0, 0, 0.2);
             position: relative;
-            display: grid;
-            grid-template-columns: repeat(2, 1fr);
-            gap: 12px;
-            background: #f9fafc;
-            padding: 40px 20px 20px 20px;
-            border-radius: 12px;
-            box-shadow: 0 2px 6px rgba(0, 0, 0, 0.05);
-            margin-bottom: 20px;
+            display: inline-block;
+            transition: transform 0.2s ease;
         }
-
-        .item-form .full {
-            grid-column: span 2;
+        .logo-text:hover {
+            transform: scale(1.05);
         }
-
-        .item-form .half {
-            width: 100%;
-        }
-
-        .remove-icon {
+        .logo-text::after {
+            content: '';
             position: absolute;
-            top: 6px;
-            right: 6px;
-            cursor: pointer;
-            color: #ef4444;
-            transition: transform 0.2s;
+            bottom: -4px;
+            left: 0;
+            width: 100%;
+            height: 2px;
+            background: linear-gradient(to right, #fb923c, #f87171);
+            border-radius: 1px;
         }
-
-        .remove-icon:hover {
-            transform: scale(1.2);
+        .logo-icon {
+            display: inline-block;
+            width: 2rem; /* w-8 */
+            height: 2rem; /* h-8 */
         }
-
-
-        .add-btn {
-            background: #4e54c8;
-            color: white;
-            font-weight: 500;
-            padding: 10px 16px;
-            border: none;
-            border-radius: 8px;
-            cursor: pointer;
-            transition: background 0.2s;
-            margin-right: 10px;
-        }
-
-        .add-btn:hover {
-            background: #3f46a4;
-        }
-
-        .submit-btn {
-            background: #10b981;
-            color: white;
-            font-weight: 500;
-            padding: 10px 16px;
-            border: none;
-            border-radius: 8px;
-            cursor: pointer;
-            transition: background 0.2s;
-        }
-
-        .submit-btn:hover {
-            background: #0f9e6e;
+        @media (max-width: 640px) {
+            .logo-icon {
+                width: 1.5rem; /* w-6 */
+                height: 1.5rem; /* h-6 */
+            }
+            .nav-btn {
+                padding: 0.375rem; /* Smaller padding for mobile */
+                min-width: 2rem; /* Smaller circular shape */
+                min-height: 2rem;
+            }
+            .nav-btn:hover {
+                padding: 0.375rem 0.75rem; /* Slightly less padding on hover */
+            }
+            .nav-btn i {
+                width: 1.25rem;
+                height: 1.25rem; /* Smaller icons on mobile */
+            }
         }
     </style>
 </head>
 
-<body>
+<body class="min-h-screen bg-gradient-to-br from-blue-200 to-purple-400 text-white font-sans">
     <!-- Navigation Bar -->
-    <nav>
-        <div class="nav-left">
-            <h1>Admin Panel</h1>
+    <nav class="bg-slate-900 flex items-center justify-between px-8 py-4 shadow-lg">
+        <div class="flex items-center gap-2 px-2 py-1 rounded-lg bg-slate-800/50">
+            <svg class="logo-icon" data-lucide="apple">
+                <defs>
+                    <linearGradient id="apple-gradient" x1="0%" y1="0%" x2="100%" y2="100%">
+                        <stop offset="0%" style="stop-color:#fb923c" /> <!-- orange-400 -->
+                        <stop offset="100%" style="stop-color:#f87171" /> <!-- red-400 -->
+                    </linearGradient>
+                </defs>
+                <path fill="url(#apple-gradient)" d="M12 20.94c1.5 0 2.75-.4 3.69-1.06a6 6 0 0 0 2.28-2.75c-2.02-.14-3.88-1.3-4.81-3.28-.88-1.88-.56-4.06.88-5.62A5.94 5.94 0 0 0 9.25 6.5c-1.5.25-2.88 1-3.88 2.12-1.38 1.62-2 3.88-1.62 6.25.38 2.25 1.56 4.25 3.44 5.56.94.66 2.06.94 3.31.94Z"/>
+                <path fill="url(#apple-gradient)" d="M12 8.94c.5-1.75 1.56-3.38 3.19-4.44-.75 1.88-1.88 3.5-3.38 4.56-1.5 1.12-2.94 1.94-4.06 1.94.88 1.25 2.38 2.12 4.25 1.94Z"/>
+            </svg>
+            <a href="admin-dashboard.html" class="logo-text text-2xl sm:text-3xl no-underline">Fruitful</a>
         </div>
-        <div class="nav-links">
-            <a href="make-purchase.html" class="nav-link">
-                <i data-lucide="shopping-bag"></i><span>Make Purchase</span>
+        <div class="flex items-center gap-4">
+            <a href="invoices.html"
+                class="nav-btn flex items-center cursor-pointer no-underline">
+                <i data-lucide="receipt"></i>
+                <span>Invoices</span>
             </a>
-            <a href="invoices.html" class="nav-link">
-                <i data-lucide="file-text"></i><span>Invoices</span>
+            <a href="admin-products.html"
+                class="nav-btn flex items-center cursor-pointer no-underline">
+                <i data-lucide="box"></i>
+                <span>Manage Products</span>
             </a>
-            <a href="admin-products.html" class="nav-link">
-                <i data-lucide="package"></i><span>Product</span>
+            <a href="vendors.html"
+                class="nav-btn flex items-center cursor-pointer no-underline">
+                <i data-lucide="users"></i>
+                <span>Manage Vendors</span>
             </a>
-            <a href="vendors.html" class="nav-link">
-                <i data-lucide="store"></i><span>Vendor</span>
-            </a>
-            <a href="#" class="nav-link" onclick="logout()">
-                <i data-lucide="log-out"></i><span>Logout</span>
+            <a href="#" onclick="logout()"
+                class="nav-btn flex items-center cursor-pointer no-underline">
+                <i data-lucide="power"></i>
+                <span>Logout</span>
             </a>
         </div>
     </nav>
 
     <!-- Purchase Form -->
-    <div class="container">
-        <h2>Make a Purchase</h2>
+    <div class="max-w-4xl mx-auto p-10">
+        <div class="bg-slate-900 text-indigo-300 p-6 rounded-2xl shadow-lg">
+            <h2 class="text-white text-xl font-semibold mb-6">Make a Purchase</h2>
 
-        <div class="section">
-            <label for="vendor">Select Vendor:</label>
-            <select id="vendor" required>
-                <option value="">Loading vendors...</option>
-            </select>
+            <div class="mb-6">
+                <label for="vendor" class="text-sm text-indigo-300">Select Vendor:</label>
+                <select id="vendor" class="w-full rounded-full px-4 py-2 text-sm text-white bg-[#333A5c] border-none outline-none mt-2" required>
+                    <option value="">Loading vendors...</option>
+                </select>
+            </div>
+
+            <div id="items-container" class="mb-6"></div>
+
+            <div class="flex gap-3">
+                <button class="rounded-full bg-indigo-100 text-indigo-700 py-2 px-4 font-medium hover:bg-indigo-200 transition duration-200"
+                    onclick="addItem()">+ Add Item</button>
+                <button class="rounded-full bg-gradient-to-r from-indigo-400 to-indigo-900 py-2 px-4 font-medium tracking-wide text-white hover:opacity-90"
+                    onclick="submitPurchase()">Purchase</button>
+            </div>
         </div>
-
-        <div id="items-container" class="section"></div>
-
-        <button class="add-btn" onclick="addItem()">+ Add Item</button>
-        <button class="submit-btn" onclick="submitPurchase()">Submit Purchase</button>
     </div>
 
     <script>
@@ -210,7 +178,6 @@
             window.location.href = "index.jsp";
         }
 
-        // Fetch vendors
         fetch("http://localhost:3010/api/vendors")
             .then(res => res.json())
             .then(data => {
@@ -232,21 +199,19 @@
             const container = document.getElementById("items-container");
 
             const itemDiv = document.createElement("div");
-            itemDiv.classList.add("item-form");
+            itemDiv.classList.add("item-form", "relative", "grid", "grid-cols-2", "gap-3", "bg-[#333A5c]", "p-6", "pt-10", "rounded-xl", "mb-4");
 
             itemDiv.innerHTML = `
-		<i class="remove-icon" data-lucide="x" onclick="removeItem(this)"></i>
-		<input type="text" placeholder="Item Name" class="name full" required />
-		<input type="number" placeholder="Quantity" class="qty half" min="1" required />
-		<input type="number" placeholder="Price" class="price half" min="0" step="0.01" required />
-		<textarea placeholder="Description" class="desc full" rows="2" required></textarea>
-	`;
+                <i class="remove-icon absolute top-2 right-2 text-red-300 hover:text-red-400 cursor-pointer transition-transform hover:scale-125" data-lucide="x" onclick="removeItem(this)"></i>
+                <input type="text" placeholder="Item Name" class="name col-span-2 rounded-full px-4 py-2 text-sm text-white bg-slate-900 border-none outline-none" required />
+                <input type="number" placeholder="Quantity" class="qty rounded-full px-4 py-2 text-sm text-white bg-slate-900 border-none outline-none" min="1" required />
+                <input type="number" placeholder="Price" class="price rounded-full px-4 py-2 text-sm text-white bg-slate-900 border-none outline-none" min="0" step="0.01" required />
+                <textarea placeholder="Description" class="desc col-span-2 rounded-xl px-4 py-2 text-sm text-white bg-slate-900 border-none outline-none" rows="2" required></textarea>
+            `;
 
             container.appendChild(itemDiv);
-            lucide.createIcons(); // to render the "x" icon
+            lucide.createIcons();
         }
-
-
 
         function removeItem(button) {
             const item = button.closest(".item-form");
